@@ -42,16 +42,15 @@
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="jazzy-usermenu">
                     <span class="dropdown-header">Account</span>
                     <div class="dropdown-divider"></div>
-                    <a href="/admin/password_change/" class="dropdown-item">
-                        <i class="fas fa-key mr-2"></i> Change password
-                    </a>
+                        <a href="/user/{{ userId }}/change" class="dropdown-item">
+                            <i class="fas fa-key mr-2"></i> Change password
+                        </a>
                     <div class="dropdown-divider"></div>
-                    <form id="logout-form" method="post" action="/admin/logout/">
-                        <input type="hidden" name="csrfmiddlewaretoken" value="ng6bZ3m4DGlWhupzgexo7xSrhLpXeWOGE8lDop5LioVGJFf7SNItjbe6nHfcPXbm">
-                        <button type="submit" class="dropdown-item"><i class="fas fa-users mr-2"></i> Log out</button>
-                    </form>
+                        <a href="/logout/" class="dropdown-item">
+                            <i class="fas fa-users mr-2"></i> Log out
+                        </a>
                     <div class="dropdown-divider"></div>
-                        <a href="/admin/auth/user/1/change/" class="dropdown-item dropdown-footer">See Profile</a>
+                        <a href="/user/{{ userId }}" class="dropdown-item dropdown-footer">See Profile</a>
                 </div>
             </li>
         </ul>
@@ -105,7 +104,7 @@
                     <div class="col-12 col-md-auto d-flex flex-grow-1 align-items-center">
                         <h1 class="h4 m-0 pr-3 mr-3 border-right"> Dashboard </h1>
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="/admin/" class="active">Home</a></li>
+                            <li class="breadcrumb-item"><a href="/" class="active">Home</a></li>
                             <li class="breadcrumb-item">Dashboard</li>
                         </ol>
                     </div>
