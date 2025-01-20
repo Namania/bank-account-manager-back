@@ -1,3 +1,5 @@
+import json
+
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth import authenticate
 
@@ -9,11 +11,22 @@ def index(request):
     userId = request.session["id"]
     accounts = Account.objects.all()
 
+    RED = 'rgb(233, 24, 69)'
+    GREEN = 'rgb(36, 202, 14)'
+    datasets = {
+        "data": [
+        ],
+        "backgroundColor": [
+        ]
+    }
+
     totalAmount = 0
     for account in accounts:
-        totalAmount += account.balance.amount
+        datasets["data"].append(int(account.balance.amount))
+        datasets["backgroundColor"].append(GREEN if account.isPositive() else RED)
+        totalAmount += account.balance
 
-    return render(request, "app/index.html", {"accounts": accounts, "userId": userId, "totalAmount": totalAmount})
+    return render(request, "app/index.html", {"accounts": accounts, "userId": userId, "totalAmount": totalAmount, "json": json.dumps(datasets)})
 
 def accountView(request, accountId):
     if "username" not in request.session.keys():
