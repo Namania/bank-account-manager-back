@@ -16,3 +16,11 @@
     padding-top: 30px;
     padding-bottom: 30px;
 }
+
+.new-text {
+    color: rgb(36, 202, 14);
+}
+
+.new-border {
+    border: 1px solid rgb(36, 202, 14);
+}
