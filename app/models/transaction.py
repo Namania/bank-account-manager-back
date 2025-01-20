@@ -5,10 +5,11 @@ from .account import Account
 
 
 class Transaction(models.Model):
-    account = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True)
+    sender = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, related_name="sender")
+    receiver = models.ForeignKey(Account, on_delete=models.SET_NULL, null=True, related_name="receiver")
     amount = MoneyField(max_digits=14, decimal_places=2, default_currency='EUR', default=0)
     comment = models.CharField(max_length=200)
     create_at = models.DateTimeField("Create at", default=timezone.now)
-    
+
     def __str__(self):
-        return self.account.label if self.account is not None else "deleted_account"
+        return f"{self.sender.label} => {self.receiver.label}" if self.sender is not None and self.receiver is not None else "deleted_account"

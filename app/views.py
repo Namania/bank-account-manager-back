@@ -3,13 +3,17 @@ import json
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth import authenticate
 
+from django.contrib.auth.models import User
+
 from .models import Account
 
 def index(request):
     if "username" not in request.session.keys():
         return redirect("login")
     userId = request.session["id"]
-    accounts = Account.objects.all()
+    user = get_object_or_404(User, pk=userId)
+
+    accounts = Account.objects.filter(owner=user)
 
     RED = 'rgb(233, 24, 69)'
     GREEN = 'rgb(36, 202, 14)'
