@@ -8,4 +8,5 @@ urlpatterns = [
     path("logout/", views.logout, name="logout"),
     path("<int:accountId>/", views.accountView, name="account"),
     path("new-account/", views.newAccountView, name="new-account"),
+    path("new-transaction/", views.newTransactionView, name="new-transaction"),
 ]
