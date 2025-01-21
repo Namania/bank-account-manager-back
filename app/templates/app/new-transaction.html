@@ -131,8 +131,8 @@
                                             <form class="" method="post">
                                                 {% csrf_token %}
                                                 <div class="mb-3">
-                                                    <label for="balance" class="form-label">Sender</label>
-                                                    <select name="sender" class="form-select">
+                                                    <label class="form-label">Sender</label>
+                                                    <select name="sender" class="form-select" required>
                                                         {% if not accountId %}
                                                             <option value="" selected>Select a sender</option>
                                                         {% endif %}
@@ -146,8 +146,8 @@
                                                     </select>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="balance" class="form-label">Receiver</label>
-                                                    <select name="receiver" class="form-select">
+                                                    <label class="form-label">Receiver</label>
+                                                    <select name="receiver" class="form-select" required>
                                                         <option value="" selected>Select a receiver</option>
                                                         {% for account in accounts %}
                                                             <option value="{{ account.pk }}">{{ account.label }}</option>
@@ -155,11 +155,11 @@
                                                     </select>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="balance" class="form-label">Amount</label>
-                                                    <input type="number" name="balance" min="0" value="0" class="form-control" id="balance">
+                                                    <label for="amount" class="form-label">Amount</label>
+                                                    <input type="number" name="amount" min="0" value="0" class="form-control" id="amount" required>
                                                 </div>
                                                 <div class="form-floating mb-3">
-                                                    <textarea name="description" maxlength="200" class="form-control" id="floatingTextarea"></textarea>
+                                                    <textarea name="description" maxlength="200" class="form-control" id="floatingTextarea" required></textarea>
                                                     <label for="floatingTextarea">Description</label>
                                                 </div>
                                                 <button type="submit" class="btn btn-success">Submit</button>

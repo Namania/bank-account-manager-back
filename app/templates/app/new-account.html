@@ -132,11 +132,11 @@
                                                 {% csrf_token %}
                                                 <div class="mb-3">
                                                     <label for="labelhelp" class="form-label">Label</label>
-                                                    <input type="text" name="label" class="form-control" id="labelhelp" aria-describedby="labelhelp">
+                                                    <input type="text" name="label" class="form-control" id="labelhelp" aria-describedby="labelhelp" required>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="balance" class="form-label">Balance</label>
-                                                    <input type="number" name="balance" min="0" class="form-control" id="balance">
+                                                    <input type="number" name="balance" min="0" class="form-control" id="balance" required>
                                                 </div>
                                                 <button type="submit" class="btn btn-success">Submit</button>
                                             </form>

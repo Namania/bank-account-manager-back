@@ -166,7 +166,9 @@
                                     <div class="timeline mb-0">
                                         {% for transaction in transactions %}
                                             <div>
-                                                {% if transaction.sender.pk == userId %}
+                                                {% if transaction.sender.owner.pk == userId and transaction.receiver.owner.pk == userId %}
+                                                    <i class="fas fa-right-left bg-primary text-xs"></i>
+                                                {% elif transaction.receiver.owner.pk == userId %}
                                                     <i class="fas fa-plus bg-success text-xs"></i>
                                                 {% else %}
                                                     <i class="fas fa-minus bg-danger text-xs"></i>
