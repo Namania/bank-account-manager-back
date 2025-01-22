@@ -1,4 +1,5 @@
 import json
+import datetime
 
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render, get_object_or_404
@@ -27,7 +28,13 @@ def accountView(request, accountId):
     accounts = Account.objects.filter(owner=user).order_by("balance").reverse()
     account = get_object_or_404(Account, pk=accountId)
 
-    transactions = Transaction.objects.filter(Q(sender=account) | Q(receiver=account)).order_by("-create_at")
+    now = datetime.datetime.now()
+    current_month = now
+    month, year = (now.month - 1, now.year) if now.month != 1 else (12, now.year - 1)
+    day = now.day - 1 if now.day != 1 else 1
+    last_month = now.replace(day=day, month=month, year=year)
+
+    transactions = Transaction.objects.filter(Q(sender=account) | Q(receiver=account) & Q(create_at__range=[last_month, current_month])).order_by("-create_at")
     hasData = transactions.exists()
     for transaction in transactions:
         datasets["labels"].append(transaction.__str__())
@@ -40,7 +47,7 @@ def accountView(request, accountId):
             color = RED
         datasets["backgroundColor"].append(color)
 
-    return render(request, "app/account.html", {"user": user,"accounts": accounts, "account": account, "json": json.dumps(datasets), "transactions": transactions[:4], "hasData": hasData})
+    return render(request, "app/account.html", {"user": user,"accounts": accounts,"test": transactions, "account": account, "json": json.dumps(datasets), "transactions": transactions[:4], "hasData": hasData})
 
 def newAccountView(request):
     if "username" not in request.session.keys():

@@ -1,4 +1,5 @@
 import json
+import datetime
 
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render, get_object_or_404
@@ -33,5 +34,10 @@ def index(request):
         datasets["backgroundColor"].append(GREEN if account.isPositive() else RED)
         totalAmount += account.balance
 
-    transactions = Transaction.objects.filter(Q(sender__in=account_ids) | Q(receiver__in=account_ids)).order_by("-create_at")[:4]
+    now = datetime.datetime.now()
+    current_month = now.replace(day=1)
+    month, year = (now.month - 1, now.year) if now.month != 1 else (12, now.year - 1)
+    last_month = now.replace(day=1, month=month, year=year)
+
+    transactions = Transaction.objects.filter(Q(sender__in=account_ids) | Q(receiver__in=account_ids) & Q(create_at__range=[last_month, current_month])).order_by("-create_at")[:4]
     return render(request, "app/index.html", {"accounts": accounts, "user": user, "totalAmount": totalAmount, "json": json.dumps(datasets), "transactions": transactions})
