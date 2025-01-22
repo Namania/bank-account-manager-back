@@ -36,6 +36,7 @@ def newTransactionView(request):
     accounts = Account.objects.filter(owner=user).order_by("balance").reverse()
     categories = Category.objects.all().order_by("label")
     return render(request, "app/new-transaction.html", {
+        "user": user,
         "accounts": accounts,
         "accountId": accountId,
         "sender": sender,

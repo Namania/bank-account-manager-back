@@ -39,13 +39,13 @@
 
         <ul class="navbar-nav ml-auto">
             <li class="nav-item dropdown">
-                <a class="nav-link btn" data-toggle="dropdown" href="#" title="admin">
-                    <i class="far fa-user" aria-hidden="true"></i>
+                <a class="nav-link btn" data-toggle="dropdown" href="#" title="Profile">
+                    <i class="far fa-user me-2" aria-hidden="true"></i>{{ user.get_full_name }}
                 </a>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="jazzy-usermenu">
                     <span class="dropdown-header">Account</span>
                     <div class="dropdown-divider"></div>
-                        <a href="/user/{{ userId }}/change" class="dropdown-item">
+                        <a href="/user/{{ user.pk }}/change" class="dropdown-item">
                             <i class="fas fa-key mr-2"></i> Change password
                         </a>
                     <div class="dropdown-divider"></div>
@@ -53,7 +53,7 @@
                             <i class="fas fa-users mr-2"></i> Log out
                         </a>
                     <div class="dropdown-divider"></div>
-                        <a href="/user/{{ userId }}" class="dropdown-item dropdown-footer">See Profile</a>
+                        <a href="/user/{{ user.pk }}" class="dropdown-item dropdown-footer">See Profile</a>
                 </div>
             </li>
         </ul>
@@ -170,9 +170,9 @@
                                     <div class="timeline mb-0">
                                         {% for transaction in transactions %}
                                             <div>
-                                                {% if transaction.sender.owner.pk == userId and transaction.receiver.owner.pk == userId %}
+                                                {% if transaction.sender.owner.pk == user.pk and transaction.receiver.owner.pk == user.pk %}
                                                     <i class="fas fa-right-left bg-primary text-xs"></i>
-                                                {% elif transaction.receiver.owner.pk == userId %}
+                                                {% elif transaction.receiver.owner.pk == user.pk %}
                                                     <i class="fas fa-plus bg-success text-xs"></i>
                                                 {% else %}
                                                     <i class="fas fa-minus bg-danger text-xs"></i>

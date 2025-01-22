@@ -40,7 +40,7 @@ def accountView(request, accountId):
             color = RED
         datasets["backgroundColor"].append(color)
 
-    return render(request, "app/account.html", {"userId": userId,"accounts": accounts, "account": account, "json": json.dumps(datasets), "transactions": transactions[:4], "hasData": hasData})
+    return render(request, "app/account.html", {"user": user,"accounts": accounts, "account": account, "json": json.dumps(datasets), "transactions": transactions[:4], "hasData": hasData})
 
 def newAccountView(request):
     if "username" not in request.session.keys():
@@ -54,4 +54,4 @@ def newAccountView(request):
         return redirect("index")
 
     accounts = Account.objects.filter(owner=user).order_by("balance").reverse()
-    return render(request, "app/new-account.html", {"accounts": accounts})
+    return render(request, "app/new-account.html", {"accounts": accounts, "user": user})

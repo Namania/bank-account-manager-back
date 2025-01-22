@@ -34,4 +34,4 @@ def index(request):
         totalAmount += account.balance
 
     transactions = Transaction.objects.filter(Q(sender__in=account_ids) | Q(receiver__in=account_ids)).order_by("-create_at")[:4]
-    return render(request, "app/index.html", {"accounts": accounts, "userId": userId, "totalAmount": totalAmount, "json": json.dumps(datasets), "transactions": transactions})
+    return render(request, "app/index.html", {"accounts": accounts, "user": user, "totalAmount": totalAmount, "json": json.dumps(datasets), "transactions": transactions})
