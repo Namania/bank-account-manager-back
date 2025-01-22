@@ -90,7 +90,7 @@
                     </li>
                     <li class="nav-item">
                         <a href="/new-transaction/" class="nav-link active">
-                            <i class="nav-icon fas fa-plus"></i> <p>Add transaction</p>
+                            <i class="nav-icon fas fa-right-left"></i> <p>Make a transaction</p>
                         </a>
                     </li>
                 </ul>
@@ -133,25 +133,39 @@
                                                 <div class="mb-3">
                                                     <label class="form-label">Sender</label>
                                                     <select name="sender" class="form-select" required>
-                                                        {% if not accountId %}
-                                                            <option value="" selected>Select a sender</option>
-                                                        {% endif %}
-                                                        {% for account in accounts %}
-                                                            {% if account.pk == accountId %}
-                                                                <option value="{{ account.pk }}" selected>{{ account.label }}</option>
-                                                            {% else %}
-                                                                <option value="{{ account.pk }}">{{ account.label }}</option>
+                                                        {% if sender is not None and sender.label == "Bank" %}
+                                                            <option value="{{ sender.pk }}" selected>{{ sender.label }}</option>
+                                                        {% else %}
+                                                            {% if sender is None %}
+                                                                <option value="" selected>Select a sender</option>
                                                             {% endif %}
-                                                        {% endfor %}
+                                                            {% for account in accounts %}
+                                                                {% if account == sender %}
+                                                                    <option value="{{ account.pk }}" selected>{{ account.label }}</option>
+                                                                {% else %}
+                                                                    <option value="{{ account.pk }}">{{ account.label }}</option>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% endif %}
                                                     </select>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Receiver</label>
                                                     <select name="receiver" class="form-select" required>
-                                                        <option value="" selected>Select a receiver</option>
-                                                        {% for account in accounts %}
-                                                            <option value="{{ account.pk }}">{{ account.label }}</option>
-                                                        {% endfor %}
+                                                        {% if receiver is not None and receiver.label == "Bank" %}
+                                                            <option value="{{ receiver.pk }}" selected>{{ receiver.label }}</option>
+                                                        {% else %}
+                                                            {% if receiver is None %}
+                                                                <option value="" selected>Select a receiver</option>
+                                                            {% endif %}
+                                                            {% for account in accounts %}
+                                                                {% if account == receiver %}
+                                                                    <option value="{{ account.pk }}" selected>{{ account.label }}</option>
+                                                                {% else %}
+                                                                    <option value="{{ account.pk }}">{{ account.label }}</option>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% endif %}
                                                     </select>
                                                 </div>
                                                 <div class="mb-3">

@@ -18,5 +18,15 @@ def newTransactionView(request):
         return redirect("index")
 
     accountId = int(request.GET["id"]) if request.method == "GET" and "id" in request.GET.keys() and request.GET["id"].isnumeric() else ""
+    bank = request.GET["bank"] if request.method == "GET" and "bank" in request.GET.keys() else None
+
+    sender = Account.objects.get(pk=accountId) if accountId != "" else None
+    receiver = None
+
+    if bank is not None:
+        receiver = Account.objects.get(label="Bank")
+        if bank == "credit":
+            sender, receiver = receiver, sender
+
     accounts = Account.objects.filter(owner=user).order_by("balance").reverse()
-    return render(request, "app/new-transaction.html", {"accounts": accounts, "accountId": accountId})
+    return render(request, "app/new-transaction.html", {"accounts": accounts, "accountId": accountId, "sender": sender, "receiver": receiver})

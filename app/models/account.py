@@ -16,7 +16,7 @@ class Account(models.Model):
         description="Is Positive",
     )
     def isPositive(self):
-        return self.balance.amount > 0
+        return self.balance.amount >= 0
     
     def __str__(self):
         return self.label

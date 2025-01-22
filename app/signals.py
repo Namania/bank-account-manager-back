@@ -7,8 +7,10 @@ def updateBalance(sender, instance, **kwargs):
     account_sender = Account.objects.get(pk=instance.sender.pk)
     account_receiver = Account.objects.get(pk=instance.receiver.pk)
 
-    account_sender.balance -= instance.amount
-    account_receiver.balance += instance.amount
+    if account_sender.label != "Bank":
+        account_sender.balance -= instance.amount
+    if account_receiver.label != "Bank":
+        account_receiver.balance += instance.amount
 
     account_sender.save()
     account_receiver.save()

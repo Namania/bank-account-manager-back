@@ -90,7 +90,7 @@
                     </li>
                     <li class="nav-item">
                         <a href="/new-transaction/" class="nav-link">
-                            <i class="nav-icon fas fa-plus"></i> <p>Add transaction</p>
+                            <i class="nav-icon fas fa-right-left"></i> <p>Make a transaction</p>
                         </a>
                     </li>
                 </ul>
@@ -108,7 +108,7 @@
                         <h1 class="h4 m-0 pr-3 mr-3 border-right"> Dashboard </h1>
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="/" class="active">Home</a></li>
-                            <li class="breadcrumb-item">Dashboard</li>
+                            <li class="breadcrumb-item">Account</li>
                         </ol>
                     </div>
                 </div>
@@ -151,10 +151,14 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-sm-12">
-                                    <div class="card py-3 align-items-center">
-                                        <p class="fs-3 mb-4">Account Chart</p>
-                                        <canvas id="pie-chart"></canvas>
-                                        <div hidden id="json">{{ json }}</div>
+                                    <div class="card">
+                                        <div class="card-header card-header-flex fs-4">
+                                            <h5 class="m-0 fs-4">Account Chart</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="pie-chart"></canvas>
+                                            <div hidden id="json">{{ json }}</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
