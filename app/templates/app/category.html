@@ -39,7 +39,7 @@
 
         <ul class="navbar-nav ml-auto">
             <li class="nav-item dropdown">
-                <a class="nav-link btn" data-toggle="dropdown" href="#" title="admin">
+                <a class="nav-link btn" data-toggle="dropdown" href="#" title="Profile">
                     <i class="far fa-user me-2" aria-hidden="true"></i>{{ user.get_full_name }}
                 </a>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-left" id="jazzy-usermenu">
@@ -104,16 +104,16 @@
     </aside>
 
     <!-- Content -->
-    <div class="content-wrapper" style="min-height: 381px;">
+    <div class="content-wrapper h-auto pb-3">
         <!-- Header path -->
         <div class="content border-bottom mb-2">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12 col-md-auto d-flex flex-grow-1 align-items-center">
-                        <h1 class="h4 m-0 pr-3 mr-3 border-right"> Dashboard </h1>
+                        <h1 class="h4 m-0 pr-3 mr-3 border-right"> Categories </h1>
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="/" class="active">Home</a></li>
-                            <li class="breadcrumb-item">Dashboard</li>
+                            <li class="breadcrumb-item">Category</li>
                         </ol>
                     </div>
                 </div>
@@ -125,77 +125,30 @@
             <div class="container-fluid">
                 <section id="content" class="content">
                     <div class="row">
-                        <div class="col-lg-12 col-12">
-                            <div class="row">
-                                <div class="col-md-12 col-sm-12">
-                                    <div class="card">
-                                        <div class="card-header card-header-flex fs-4">
-                                            <h5 class="m-0 fs-4">New transaction</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <form class="" method="post">
-                                                {% csrf_token %}
-                                                <div class="mb-3">
-                                                    <label class="form-label">Sender</label>
-                                                    <select name="sender" class="form-select" required>
-                                                        {% if sender is not None and sender.label == "Bank" %}
-                                                            <option value="{{ sender.pk }}" selected>{{ sender.label }}</option>
-                                                        {% else %}
-                                                            {% if sender is None %}
-                                                                <option value="" selected>Select a sender</option>
-                                                            {% endif %}
-                                                            {% for account in accounts %}
-                                                                {% if account == sender %}
-                                                                    <option value="{{ account.pk }}" selected>{{ account.label }}</option>
-                                                                {% else %}
-                                                                    <option value="{{ account.pk }}">{{ account.label }}</option>
-                                                                {% endif %}
-                                                            {% endfor %}
-                                                        {% endif %}
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Receiver</label>
-                                                    <select name="receiver" class="form-select" required>
-                                                        {% if receiver is not None and receiver.label == "Bank" %}
-                                                            <option value="{{ receiver.pk }}" selected>{{ receiver.label }}</option>
-                                                        {% else %}
-                                                            {% if receiver is None %}
-                                                                <option value="" selected>Select a receiver</option>
-                                                            {% endif %}
-                                                            {% for account in accounts %}
-                                                                {% if account == receiver %}
-                                                                    <option value="{{ account.pk }}" selected>{{ account.label }}</option>
-                                                                {% else %}
-                                                                    <option value="{{ account.pk }}">{{ account.label }}</option>
-                                                                {% endif %}
-                                                            {% endfor %}
-                                                        {% endif %}
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="amount" class="form-label">Amount</label>
-                                                    <input type="number" name="amount" min="0" value="0" class="form-control" id="amount" required>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Category</label>
-                                                    <select name="category" class="form-select" required>
-                                                        <option value="" selected>Select a category</option>
-                                                        {% for category in categories %}
-                                                            <option value="{{ category.pk }}">{{ category.label }}</option>
-                                                        {% endfor %}
-                                                    </select>
-                                                </div>
-                                                <div class="form-floating mb-3">
-                                                    <textarea name="description" maxlength="200" class="form-control" id="floatingTextarea" required></textarea>
-                                                    <label for="floatingTextarea">Description</label>
-                                                </div>
-                                                <button type="submit" class="btn btn-success">Submit</button>
-                                            </form>
-                                        </div>
-                                    </div>
+                        <div class="col-lg-12 col-sm-12">
+                            <div class="card">
+                                <div class="card-header card-header-flex fs-4">
+                                    <h5 class="m-0 fs-4">All categories</h5>
                                 </div>
-                            <div>
+                                <div class="card-body transaction-list">
+                                    <table class="table table-sm fs-5">
+                                        <tbody>
+                                            <tr class="align-items-center">
+                                                <td class="text-start ps-3">
+                                                    <p class="my-3"><b>Label</b></p>
+                                                </td>
+                                            </tr>
+                                            {% for category in categories %}
+                                                <tr class="align-items-center">
+                                                    <td class="text-start ps-3">
+                                                        <p id="category{{ category.pk }}" class="my-3"><a href="/category/#category{{ category.pk }}">{{ category.label }}</a></p>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -204,7 +157,7 @@
     </div>
 
     <!-- Copyright -->
-    <footer class="main-footer ">
+    <footer class="main-footer position-relative z-1">
         <div class="float-right d-none d-sm-inline">
             <b>Namania</b>
         </div>

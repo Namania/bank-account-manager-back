@@ -33,3 +33,17 @@
 .little-button-radius {
     border-radius: 5px !important;
 }
+
+.custom-fas {
+    text-align: center;
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+}
+
+.transaction-list {
+    height: auto;
+    max-height: 500px;
+    overflow-y: scroll;
+}
