@@ -17,6 +17,14 @@ def newTransactionView(request):
         comment = request.POST["description"]
         category = Category.objects.get(pk=request.POST["category"])
 
+        if sender.label != "Bank":
+            sender.balance.amount -= int(amount)
+        if receiver.label != "Bank":
+            receiver.balance.amount += int(amount)
+
+        sender.save()
+        receiver.save()
+
         Transaction.objects.create(sender=sender, receiver=receiver, amount=amount, comment=comment, category=category)
         if "url" in request.GET.keys() and request.GET["url"] == "account":
             return redirect("account", accountId=accountId)
