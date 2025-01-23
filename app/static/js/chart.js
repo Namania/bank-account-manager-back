@@ -32,7 +32,7 @@ const options = {
 };
 
 const config = {
-    type: 'doughnut',
+    type: 'pie',
     data: data,
     options
 };
