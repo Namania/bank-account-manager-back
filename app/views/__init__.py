@@ -1,4 +1,4 @@
-from .account import accountView, newAccountView
+from .account import accountView, newAccountView, delete
 from .auth import login, logout
 from .index import index
 from .transaction import newTransactionView

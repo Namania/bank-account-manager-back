@@ -62,3 +62,14 @@ def newAccountView(request):
 
     accounts = Account.objects.filter(owner=user).order_by("balance").reverse()
     return render(request, "app/new-account.html", {"accounts": accounts, "user": user})
+
+def delete(request, accountId):
+    if "username" not in request.session.keys():
+        return redirect("login")
+    userId = request.session["id"]
+    user = get_object_or_404(User, pk=userId)
+
+    account = get_object_or_404(Account, pk=accountId)
+    if account.owner == user:
+        pass
+    return redirect("index")

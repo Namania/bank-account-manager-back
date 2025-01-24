@@ -255,7 +255,7 @@
                                         </div>
                                         <div class="card-body transaction-list align-items-center d-flex justify-content-end">
                                             <a class="btn btn-primary" href="/{{ account.pk }}/edit/"><i class="fas me-2 fa-pen-to-square text-xs"></i> Edit account</a>
-                                            <a class="btn btn-danger ms-2" href="/{{ account.pk }}/delete/"><i class="fas me-2 fa-trash text-xs"></i> Delete account</a>
+                                            <button class="btn btn-danger ms-2" onclick="deleteConfirm('{{ account.pk }}')"><i class="fas me-2 fa-trash text-xs"></i> Delete account</button>
                                         </div>
                                     </div>
                                 </div>
@@ -291,3 +291,4 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 <script src="{% static 'js/chart.js' %}"></script>
+<script src="{% static 'js/delete.js' %}"></script>
