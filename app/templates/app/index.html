@@ -118,9 +118,9 @@
                                                 {% endif %}
                                                 <div class="timeline-item align-items-center">
                                                     <h3 class="timeline-header no-border">
-                                                        <strong>From</strong> <a href="/{{ transaction.sender.pk }}/">{{ transaction.sender }}</a>
+                                                        <strong>From</strong> <a href="/{{ transaction.sender.pk }}/">{{ transaction.sender.getName }}</a>
                                                         <br>
-                                                        <strong>To</strong> <a href="/{{ transaction.receiver.pk }}/">{{ transaction.receiver }}</a>
+                                                        <strong>To</strong> <a href="/{{ transaction.receiver.pk }}/">{{ transaction.receiver.getName }}</a>
                                                     </h3>
                                                     <div class="timeline-header">
                                                         <ul class="list-unstyled p-0 mb-0">

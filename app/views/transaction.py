@@ -1,6 +1,8 @@
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.models import User
+
 from app.models import Account, Transaction, Category
+from app.utils.account import getAccounts
 
 def newTransactionView(request):
     if "username" not in request.session.keys():
@@ -41,7 +43,7 @@ def newTransactionView(request):
         if bank == "credit":
             sender, receiver = receiver, sender
 
-    accounts = Account.objects.filter(owner=user).order_by("balance").reverse()
+    accounts = getAccounts(user)
     categories = Category.objects.all().order_by("label")
     return render(request, "app/new-transaction.html", {
         "user": user,

@@ -4,7 +4,9 @@ import datetime
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render, get_object_or_404
 from django.db.models import Q
-from app.models import Account, Transaction
+from app.models import Transaction
+
+from app.utils.account import getAccounts
 
 def index(request):
     if "username" not in request.session.keys():
@@ -12,12 +14,12 @@ def index(request):
     userId = request.session["id"]
     user = get_object_or_404(User, pk=userId)
 
-    accounts = Account.objects.filter(Q(owner=user) & Q(isActive=True)).order_by("balance").reverse()
+    accounts = getAccounts(user)
 
     now = datetime.datetime.now()
-    current_month = now.replace(day=1)
+    current_month = now.replace(day=now.day)
     month, year = (now.month - 1, now.year) if now.month != 1 else (12, now.year - 1)
-    last_month = now.replace(day=1, month=month, year=year)
+    last_month = now.replace(day=now.day, month=month, year=year)
 
     colors = [
         "pink",
@@ -48,5 +50,6 @@ def index(request):
         index+=1
         totalAmount += account.balance
 
-    transactions = Transaction.objects.filter(Q(sender__in=account_ids) | Q(receiver__in=account_ids) & Q(create_at__range=[last_month, current_month])).order_by("-create_at")[:4]
+    print(last_month, current_month)
+    transactions = Transaction.objects.filter((Q(sender_id__in=account_ids) | Q(receiver_id__in=account_ids)) & Q(create_at__range=[last_month, current_month])).order_by("-create_at")[:4]
     return render(request, "app/index.html", {"accounts": accounts, "user": user, "totalAmount": totalAmount, "json": json.dumps(datasets), "transactions": transactions})

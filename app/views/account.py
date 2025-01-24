@@ -6,6 +6,8 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.db.models import Q
 from app.models import Account, Transaction
 
+from app.utils.account import getAccounts
+
 
 def accountView(request, accountId):
     if "username" not in request.session.keys():
@@ -25,7 +27,7 @@ def accountView(request, accountId):
         ]
     }
 
-    accounts = Account.objects.filter(Q(owner=user) & Q(isActive=True)).order_by("balance").reverse()
+    accounts = getAccounts(user)
     account = get_object_or_404(Account, pk=accountId)
 
     now = datetime.datetime.now()
@@ -60,7 +62,7 @@ def newAccountView(request):
         Account.objects.create(owner=user, label=request.POST["label"], balance=request.POST["balance"])
         return redirect("index")
 
-    accounts = Account.objects.filter(owner=user).order_by("balance").reverse()
+    accounts = getAccounts(user)
     return render(request, "app/new-account.html", {"accounts": accounts, "user": user})
 
 def delete(request, accountId):

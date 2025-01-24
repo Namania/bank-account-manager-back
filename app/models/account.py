@@ -11,13 +11,15 @@ class Account(models.Model):
     create_at = models.DateTimeField(default=timezone.now, verbose_name="Create at")
     isActive = models.BooleanField(default=True, verbose_name="Is Active")
 
-
     @admin.display(
         boolean=True,
         description="Is Positive",
     )
     def isPositive(self):
         return self.balance.amount >= 0
+
+    def getName(self):
+        return self.label if self.isActive else f"{self.label} (deleted)"
     
     def __str__(self):
         return self.label
