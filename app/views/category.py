@@ -30,6 +30,15 @@ def categoryDetail(request, categoryId):
 
     return render(request, "app/category-detail.html", {"accounts": accounts, "category": category, "user": user})
 
+def categoryDelete(request, categoryId):
+    if "username" not in request.session.keys():
+        return redirect("login")
+    
+    category = get_object_or_404(Category, pk=categoryId)
+    category.delete()
+
+    return redirect("/category/")
+
 def newCategory(request):
     if "username" not in request.session.keys():
         return redirect("login")

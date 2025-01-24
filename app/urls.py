@@ -14,5 +14,6 @@ urlpatterns = [
     path("user/", views.profile, name="profile"),
     path("category/", views.categoryIndex, name="category"),
     path("category/<int:categoryId>/", views.categoryDetail, name="categoryDetail"),
+    path("category/<int:categoryId>/delete/", views.categoryDelete, name="categoryDelete"),
     path("new-category/", views.newCategory, name="new-category"),
 ]
