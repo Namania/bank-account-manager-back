@@ -23,7 +23,7 @@ This project is made with django. It is a bank account manager to track your exp
 5 - Go on your interface
 > http://127.0.0.1:8000/admin/
 
-6 - Create a user account to use it as simple user (withou staff or superuser rights)
+6 - Create a user account to use it as simple user (without staff or superuser rights)
 
 ![add-account](./git-image/create-account.png)
 

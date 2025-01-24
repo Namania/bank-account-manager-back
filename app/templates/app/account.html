@@ -148,9 +148,9 @@
                                             </div>
                                         </div>
                                         <div class="card-body d-flex justify-content-end">
-                                            <a href="/new-transaction/?id={{ account.pk }}&url=account" class="btn btn-primary me-1">Make a transaction</a>
-                                            <a href="/new-transaction/?id={{ account.pk }}&url=account&bank=debit" class="btn btn-danger me-1">Debit</a>
-                                            <a href="/new-transaction/?id={{ account.pk }}&url=account&bank=credit" class="btn btn-success">Credit</a>
+                                            <a href="/new-transaction/?id={{ account.pk }}&url=account" class="btn btn-primary me-1"><i class="fas me-2 fa-right-left text-xs"></i> Make a transaction</a>
+                                            <a href="/new-transaction/?id={{ account.pk }}&url=account&bank=debit" class="btn btn-danger me-1"><i class="fas me-2 fa-minus text-xs"></i> Debit</a>
+                                            <a href="/new-transaction/?id={{ account.pk }}&url=account&bank=credit" class="btn btn-success"><i class="fas me-2 fa-plus text-xs"></i> Credit</a>
                                         </div>
                                     </div>
                                 </div>
@@ -248,6 +248,17 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="card">
+                                        <div class="card-header fs-4">
+                                            Actions
+                                        </div>
+                                        <div class="card-body transaction-list align-items-center d-flex justify-content-end">
+                                            <a class="btn btn-primary" href="/{{ account.pk }}/edit/"><i class="fas me-2 fa-pen-to-square text-xs"></i> Edit account</a>
+                                            <a class="btn btn-danger ms-2" href="/{{ account.pk }}/delete/"><i class="fas me-2 fa-trash text-xs"></i> Delete account</a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -256,6 +267,7 @@
         </div>
     </div>
 
+
     <!-- Copyright -->
     <footer class="main-footer position-relative z-1">
         <div class="float-right d-none d-sm-inline">
@@ -263,22 +275,19 @@
         </div>
         <strong>Copyright © 2025 .</strong> All rights reserved.
     </footer>
-    
-
-
 
 <div id="sidebar-overlay"></div></div>
 
 
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
-<script src="{% static 'js/chart.js' %}"></script>
-
 <!-- jQuery -->
 <script src="/static/admin/js/vendor/jquery/jquery.js"></script>
 <!-- Bootstrap 4 -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
 <script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
 <!-- AdminLTE App -->
 <script src="/static/vendor/adminlte/js/adminlte.min.js"></script>
 <!-- Django customisations -->
 <script src="/static/jazzmin/js/main.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+<script src="{% static 'js/chart.js' %}"></script>
