@@ -19,7 +19,7 @@ def index(request):
     now = datetime.datetime.now()
     current_month = now.replace(day=now.day)
     month, year = (now.month - 1, now.year) if now.month != 1 else (12, now.year - 1)
-    last_month = now.replace(day=now.day, month=month, year=year)
+    last_month = now.replace(day=now.day - 1 if now.day != 1 else now.day, month=month, year=year)
 
     colors = [
         "pink",
