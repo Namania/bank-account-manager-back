@@ -66,16 +66,12 @@
                                                 <div class="mb-3">
                                                     <label class="form-label">Sender</label>
                                                     <select name="sender" class="form-select" required>
-                                                        {% if sender is not None and sender.label == "Bank" %}
+                                                        {% if sender is not None  %}
                                                             <option value="{{ sender.pk }}" selected>{{ sender.label }}</option>
                                                         {% else %}
-                                                            {% if sender is None %}
-                                                                <option value="" selected>Select a sender</option>
-                                                            {% endif %}
+                                                            <option value="" selected>Select a receiver</option>
                                                             {% for account in accounts %}
-                                                                {% if account == sender %}
-                                                                    <option value="{{ account.pk }}" selected>{{ account.label }}</option>
-                                                                {% else %}
+                                                                {% if receiver is None or receiver != account  %}
                                                                     <option value="{{ account.pk }}">{{ account.label }}</option>
                                                                 {% endif %}
                                                             {% endfor %}
@@ -85,16 +81,12 @@
                                                 <div class="mb-3">
                                                     <label class="form-label">Receiver</label>
                                                     <select name="receiver" class="form-select" required>
-                                                        {% if receiver is not None and receiver.label == "Bank" %}
+                                                        {% if receiver is not None  %}
                                                             <option value="{{ receiver.pk }}" selected>{{ receiver.label }}</option>
                                                         {% else %}
-                                                            {% if receiver is None %}
-                                                                <option value="" selected>Select a receiver</option>
-                                                            {% endif %}
+                                                            <option value="" selected>Select a receiver</option>
                                                             {% for account in accounts %}
-                                                                {% if account == receiver %}
-                                                                    <option value="{{ account.pk }}" selected>{{ account.label }}</option>
-                                                                {% else %}
+                                                                {% if sender is None or sender != account  %}
                                                                     <option value="{{ account.pk }}">{{ account.label }}</option>
                                                                 {% endif %}
                                                             {% endfor %}
