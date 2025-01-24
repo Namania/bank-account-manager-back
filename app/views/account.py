@@ -25,7 +25,7 @@ def accountView(request, accountId):
         ]
     }
 
-    accounts = Account.objects.filter(owner=user).order_by("balance").reverse()
+    accounts = Account.objects.filter(Q(owner=user) & Q(isActive=True)).order_by("balance").reverse()
     account = get_object_or_404(Account, pk=accountId)
 
     now = datetime.datetime.now()
@@ -71,5 +71,6 @@ def delete(request, accountId):
 
     account = get_object_or_404(Account, pk=accountId)
     if account.owner == user:
-        pass
+        account.isActive = False
+        account.save()
     return redirect("index")

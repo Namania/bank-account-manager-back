@@ -9,6 +9,7 @@ class Account(models.Model):
     label = models.CharField(max_length=200, verbose_name="Title")
     balance = MoneyField(max_digits=14, decimal_places=2, default_currency='EUR', default=0, verbose_name="Balance")
     create_at = models.DateTimeField(default=timezone.now, verbose_name="Create at")
+    isActive = models.BooleanField(default=True, verbose_name="Is Active")
 
 
     @admin.display(

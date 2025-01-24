@@ -12,7 +12,7 @@ def index(request):
     userId = request.session["id"]
     user = get_object_or_404(User, pk=userId)
 
-    accounts = Account.objects.filter(owner=user).order_by("balance").reverse()
+    accounts = Account.objects.filter(Q(owner=user) & Q(isActive=True)).order_by("balance").reverse()
 
     now = datetime.datetime.now()
     current_month = now.replace(day=1)
