@@ -30,13 +30,7 @@ def accountView(request, accountId):
     accounts = getAccounts(user)
     account = get_object_or_404(Account, pk=accountId)
 
-    now = datetime.datetime.now()
-    current_month = now
-    month, year = (now.month - 1, now.year) if now.month != 1 else (12, now.year - 1)
-    day = now.day - 1 if now.day != 1 else 1
-    last_month = now.replace(day=day, month=month, year=year)
-
-    transactions = Transaction.objects.filter(Q(sender=account) | Q(receiver=account) & Q(create_at__range=[last_month, current_month])).order_by("-create_at")
+    transactions = Transaction.objects.filter(Q(sender=account) | Q(receiver=account)).order_by("-create_at")
     hasData = transactions.exists()
     for transaction in transactions:
         datasets["labels"].append(transaction.__str__())

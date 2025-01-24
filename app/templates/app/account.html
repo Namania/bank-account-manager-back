@@ -163,7 +163,7 @@
                                                                 {% if transaction.category is None %}
                                                                     <p class="my-3">No category</p>
                                                                 {% else %}
-                                                                    <p class="my-3"><a href="/category/#category{{ transaction.category.pk }}" style="color: {{ transaction.category.color }};">{{ transaction.category.label }}</a></p>
+                                                                    <p class="my-3"><a href="/category/{{ transaction.category.pk }}/" style="color: {{ transaction.category.color }};">{{ transaction.category.label }}</a></p>
                                                                 {% endif %}
                                                             </td>
                                                             <td>

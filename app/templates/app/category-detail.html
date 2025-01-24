@@ -75,6 +75,85 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-lg-12 col-sm-12">
+                            <div class="card">
+                                <div class="card-header card-header-flex fs-4">
+                                    <h5 class="m-0 fs-4">Transactions related to it</h5>
+                                </div>
+                                <div class="card-body transaction-list pt-0 mt-4">
+                                    <table class="table table-sm fs-5">
+                                        <tbody>
+                                            <tr class="align-items-center">
+                                                <td class="text-center">
+                                                    <p class="my-3"><b>Status</b></p>
+                                                </td>
+                                                <td>
+                                                    <p class="my-3"><b>Sender</b></p>
+                                                </td>
+                                                <td>
+                                                    <p class="my-3"><b>Receiver</b></p>
+                                                </td>
+                                                <td>
+                                                    <p class="my-3"><b>Amount</b></p>
+                                                </td>
+                                                <td>
+                                                    <p class="my-3"><b>Comment</b></p>
+                                                </td>
+                                                <td>
+                                                    <p class="my-3"><b>Category</b></p>
+                                                </td>
+                                                <td>
+                                                    <p class="my-3"><b>Create Date</b></p>
+                                                </td>
+                                            </tr>
+                                            {% for transaction in transactions %}
+                                                <tr class="align-items-center">
+                                                    <td class="text-center">
+                                                        {% if transaction.sender.owner.pk == user.pk and transaction.receiver.owner.pk == user.pk %}
+                                                            <p class="my-3"><i class="custom-fas fas fa-right-left bg-primary text-xs"></i></p>
+                                                        {% elif transaction.receiver.owner.pk == user.pk %}
+                                                            <p class="my-3"><i class="custom-fas fas fa-plus bg-success text-xs"></i></p>
+                                                        {% else %}
+                                                            <p class="my-3"><i class="custom-fas fas fa-minus bg-danger text-xs"></i></p>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if transaction.sender.label == "Bank" %}
+                                                            <p class="my-3">{{ transaction.sender.getName }}</p>
+                                                        {% else %}
+                                                            <p class="my-3 text-primary"><a href="/{{ transaction.sender.pk }}/">{{ transaction.sender.getName }}</a></p>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if transaction.receiver.label == "Bank" %}
+                                                            <p class="my-3">{{ transaction.receiver }}</p>
+                                                        {% else %}
+                                                            <p class="my-3 text-primary"><a href="/{{ transaction.receiver.pk }}/">{{ transaction.receiver.getName }}</a></p>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        <p class="my-3">{{ transaction.amount.amount }} {{ transaction.amount.currency }}</p>
+                                                    </td>
+                                                    <td>
+                                                        <p class="my-3">{{ transaction.comment }}</p>
+                                                    </td>
+                                                    <td>
+                                                        {% if transaction.category is None %}
+                                                            <p class="my-3">No category</p>
+                                                        {% else %}
+                                                            <p class="my-3"><a href="/category/#category{{ transaction.category.pk }}" style="color: {{ transaction.category.color }};">{{ transaction.category.label }}</a></p>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        <p class="my-3 fs-6 text-secondary"><i class="fas fa-clock me-2"></i>{{ transaction.create_at.ctime }}</p>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </section>
             </div>
