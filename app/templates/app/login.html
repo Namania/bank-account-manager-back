@@ -30,7 +30,7 @@
             <h1>
                 <picture>
                     <source srcset="/static/image/logo.png" media="(prefers-color-scheme: dark)">
-                    <img src="/static/image/logo.png" class="mb-5" style="max-height: 200px;" alt="Account Manager">
+                    <img src="/static/image/logo.png" alt="Account Manager">
                 </picture>
             </h1>
         </div>
@@ -38,7 +38,7 @@
         <div class="card">
             <div class="card-body">
                 <p class="login-box-msg">Welcome to bank account manager !</p>
-                <form action="/login/" method="post">
+                <form class="mb-0" action="/login/" method="post">
                     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                     <div class="input-group mb-3">
                         <input type="text" name="username" maxlength="100" class="form-control" placeholder="Username" required="">
