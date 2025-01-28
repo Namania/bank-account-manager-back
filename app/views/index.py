@@ -45,7 +45,7 @@ def index(request):
     for account in accounts:
         account_ids.append(account.pk)
         datasets["labels"].append(account.label)
-        datasets["data"].append(int(account.balance.amount))
+        datasets["data"].append(float(account.balance.amount))
         datasets["color"].append(colors[index % len(colors)])
         index+=1
         totalAmount += account.balance

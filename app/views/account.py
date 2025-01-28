@@ -34,7 +34,7 @@ def accountView(request, accountId):
     hasData = transactions.exists()
     for transaction in transactions:
         datasets["labels"].append(transaction.__str__())
-        datasets["data"].append(int(transaction.amount.amount))
+        datasets["data"].append(float(transaction.amount.amount))
         if transaction.sender.owner == user and transaction.receiver.owner == user:
             color = BLUE
         elif transaction.receiver == account:
