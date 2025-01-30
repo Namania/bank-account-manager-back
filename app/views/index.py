@@ -51,8 +51,9 @@ def index(request):
         datasets["data"].append(account.getBalance())
         datasets["color"].append(colors[index % len(colors)])
         index+=1
-        totalAmount["amount"] += account.getBalance()
+        totalAmount["amount"] += account.balance.amount
 
+    totalAmount["amount"] = float(totalAmount["amount"] / 100)
     print(last_month, current_month)
     transactions = Transaction.objects.filter((Q(sender_id__in=account_ids) | Q(receiver_id__in=account_ids)) & Q(create_at__range=[last_month, current_month])).order_by("-create_at")[:4]
     return render(request, "app/index.html", {"accounts": accounts, "user": user, "totalAmount": totalAmount, "json": json.dumps(datasets), "transactions": transactions})
