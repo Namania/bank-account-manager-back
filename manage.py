@@ -1,7 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import os
 import sys
-
 
 def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bankAccountManager.settings')
