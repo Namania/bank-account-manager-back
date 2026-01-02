@@ -1,13 +1,12 @@
-FROM python
-
-RUN mkdir /app
+FROM python:3.12-slim
 
 WORKDIR /app
 
-COPY . /app/
+RUN apt-get update && apt-get install -y libpq-dev gcc && rm -rf /var/lib/apt/lists/*
 
-RUN python -m pip install -r requirements.txt
-RUN python manage.py makemigrations app
-RUN python manage.py migrate
-RUN python manage.py create_bank
-RUN python manage.py runserver 0.0.0.0:5555
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+CMD sh -c "python manage.py makemigrations app && python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn bankAccountManager.wsgi:application --bind 0.0.0.0:5555"
