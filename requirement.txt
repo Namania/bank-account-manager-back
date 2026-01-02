@@ -1,4 +1,10 @@
-django
-django-jazzmin
-django-money
 django-colorfield
+django<6.0
+django-jazzmin
+django-filter
+django-money
+djangorestframework
+drf-redesign
+markdown
+python-dotenv
+psycopg2-binary

@@ -5,7 +5,7 @@ from djmoney.models.fields import MoneyField
 from django.contrib.auth.models import User
 
 class Account(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    owners = models.ManyToManyField(User, blank=True)
     label = models.CharField(max_length=200, verbose_name="Title")
     balance = MoneyField(max_digits=14, decimal_places=2, default_currency='EUR', default=0, verbose_name="Balance")
     create_at = models.DateTimeField(default=timezone.now, verbose_name="Create at")

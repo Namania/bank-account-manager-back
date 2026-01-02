@@ -1,4 +1,5 @@
 # Bank Account Manager
+*Have to be recycle*
 
 This project is made with django. It is a bank account manager to track your expenses through a web interface.
 
