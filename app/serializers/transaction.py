@@ -8,7 +8,7 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ['sender', 'receiver', 'amount', 'comment', 'category', 'create_at']
+        fields = ['id', 'sender', 'receiver', 'amount', 'comment', 'category', 'create_at']
 
 class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all().order_by('id')

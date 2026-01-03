@@ -4,7 +4,7 @@ from app.models.account import Account
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
-        fields = ['owners', 'label', 'balance', 'create_at', 'isActive']
+        fields = ['id', 'owners', 'label', 'balance', 'create_at', 'isActive']
 
 class AccountViewSet(viewsets.ModelViewSet):
     queryset = Account.objects.all()
