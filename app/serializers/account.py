@@ -12,4 +12,4 @@ class AccountViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Account.objects.all().order_by('id') if user.is_staff else Account.objects.filter(owners=user).order_by('id')
+        return Account.objects.all().order_by('id') if user.is_staff else Account.objects.filter(owners=user, isActive=True).order_by('id')
