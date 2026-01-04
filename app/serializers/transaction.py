@@ -39,7 +39,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Transaction.objects.all().order_by('create_at') if user.is_staff else Transaction.objects.filter(Q(sender__owners=user) | Q(receiver__owners=user)).distinct().order_by('create_at')
+        return Transaction.objects.all().order_by('create_at').reverse() if user.is_staff else Transaction.objects.filter(Q(sender__owners=user) | Q(receiver__owners=user)).distinct().order_by('create_at').reverse()
 
     @action(detail=False, url_path='by_account/(?P<account_id>[^/.]+)')
     def by_account(self, request, account_id=None):
