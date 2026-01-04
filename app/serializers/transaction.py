@@ -1,15 +1,22 @@
 from django.db.models import Q
 from rest_framework import serializers, viewsets
-from app.models.transaction import Transaction
-from app.serializers.category import CategorySerializer
-from app.serializers.account import AccountSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from app.models.account import Account
+from app.models.category import Category
+from app.models.transaction import Transaction
+from app.serializers.category import CategorySerializer
+from app.serializers.account import AccountSerializer
+
 class TransactionSerializer(serializers.ModelSerializer):
-    category = CategorySerializer()
-    receiver = AccountSerializer()
-    sender = AccountSerializer()
+    category_details = CategorySerializer(source='category', read_only=True)
+    receiver_details = AccountSerializer(source='receiver', read_only=True)
+    sender_details = AccountSerializer(source='sender', read_only=True)
+
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
+    receiver = serializers.PrimaryKeyRelatedField(queryset=Account.objects.all())
+    sender = serializers.PrimaryKeyRelatedField(queryset=Account.objects.all())
 
     class Meta:
         model = Transaction
@@ -21,7 +28,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Transaction.objects.all().order_by('id') if user.is_staff else Transaction.objects.filter(Q(sender__owners=user) | Q(receiver__owners=user)).distinct().order_by('id')
+        return Transaction.objects.all().order_by('create_at') if user.is_staff else Transaction.objects.filter(Q(sender__owners=user) | Q(receiver__owners=user)).distinct().order_by('create_at')
 
     @action(detail=False, url_path='by_account/(?P<account_id>[^/.]+)')
     def by_account(self, request, account_id=None):
