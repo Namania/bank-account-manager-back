@@ -1,0 +1,16 @@
+[MASTER]
+ignore=migrations
+
+[MESSAGES CONTROL]
+disable=
+    missing-module-docstring,
+    missing-class-docstring,
+    missing-function-docstring,
+    R0903,
+    C0415,
+    W0212,
+    invalid-name,
+    line-too-long,
+    no-member,
+    broad-exception-caught,
+    too-many-ancestors,
