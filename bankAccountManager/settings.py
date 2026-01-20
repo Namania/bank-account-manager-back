@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'drf_redesign',
     'rest_framework.authtoken',
     'rest_framework',
-    'app',
+    'app.apps.BankAppConfig',
     'djmoney',
     'colorfield',
     'corsheaders',

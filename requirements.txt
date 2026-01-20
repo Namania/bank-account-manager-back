@@ -8,7 +8,7 @@ djangorestframework
 drf-redesign
 gunicorn
 markdown
+psycopg2-binary
 pylint
 python-dotenv
-psycopg2-binary
 whitenoise

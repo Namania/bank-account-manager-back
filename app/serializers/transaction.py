@@ -42,7 +42,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
         return Transaction.objects.all().order_by('create_at').reverse() if user.is_staff else Transaction.objects.filter(Q(sender__owners=user) | Q(receiver__owners=user)).distinct().order_by('create_at').reverse()
 
     @action(detail=False, url_path='by_account/(?P<account_id>[^/.]+)')
-    def by_account(self, request, account_id=None):
+    def by_account(self, _, account_id=None):
         queryset = self.get_queryset().filter(
             Q(sender_id=account_id) | Q(receiver_id=account_id)
         )

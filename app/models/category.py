@@ -7,8 +7,8 @@ class Category(models.Model):
     color = ColorField(verbose_name="Color", default="#007bff")
 
     def __str__(self):
-        return self.label
-    
+        return str(self.label)
+
     class Meta:
         verbose_name = "Category"
         verbose_name_plural = "Categories"

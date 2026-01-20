@@ -1,8 +1,9 @@
-from django.utils import timezone
 from django.db import models
 from django.contrib import admin
-from djmoney.models.fields import MoneyField
 from django.contrib.auth.models import User
+from django.utils import timezone
+
+from djmoney.models.fields import MoneyField
 
 class Account(models.Model):
     owners = models.ManyToManyField(User, blank=True)
@@ -17,7 +18,7 @@ class Account(models.Model):
     )
     def isPositive(self):
         return self.balance.amount >= 0
-    
+
     def add(self, amount: float):
         self.balance.amount += int(amount * 100)
 
@@ -26,12 +27,12 @@ class Account(models.Model):
 
     def getBalance(self):
         return float(int(self.balance.amount) / 100)
-    
+
     def set(self, amount: float):
         self.balance.amount = int(amount * 100)
 
     def getName(self):
         return self.label if self.isActive else f"{self.label} (deleted)"
-    
+
     def __str__(self):
-        return self.label
+        return str(self.label)

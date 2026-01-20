@@ -1,9 +1,8 @@
 from django.apps import AppConfig
 
-
-class AppConfig(AppConfig):
+class BankAppConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'app'
 
     def ready(self):
-        from . import signals
+        import app.signals # pylint: disable=unused-import

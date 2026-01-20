@@ -6,7 +6,7 @@ from rest_framework.authtoken.models import Token
 from .models import Transaction, Account
 
 @receiver(pre_delete, sender=Transaction)
-def updateBalance(sender, instance, **kwargs):
+def updateBalance(sender, instance, **kwargs): # pylint: disable=unused-argument
     account_sender = Account.objects.get(pk=instance.sender.pk)
     account_receiver = Account.objects.get(pk=instance.receiver.pk)
 
@@ -17,12 +17,12 @@ def updateBalance(sender, instance, **kwargs):
     account_receiver.save()
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_auth_token(sender, instance=None, created=False, **kwargs):
+def create_auth_token(sender, instance=None, created=False, **kwargs): # pylint: disable=unused-argument
     if created and not instance.username == "Bank":
         Token.objects.create(user=instance)
 
 @receiver(post_save, sender=Transaction)
-def update_account_balance(sender, instance, created, **kwargs):
+def update_account_balance(sender, instance, created, **kwargs): # pylint: disable=unused-argument
     if created:
         receiver_account = instance.receiver
         sender_account = instance.sender
