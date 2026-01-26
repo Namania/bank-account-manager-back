@@ -10,8 +10,8 @@ def updateBalance(sender, instance, **kwargs): # pylint: disable=unused-argument
     account_sender = Account.objects.get(pk=instance.sender.pk)
     account_receiver = Account.objects.get(pk=instance.receiver.pk)
 
-    account_sender.balance += instance.amount
-    account_receiver.balance -= instance.amount
+    account_sender.balance += instance.amount * 100
+    account_receiver.balance -= instance.amount * 100
 
     account_sender.save()
     account_receiver.save()
