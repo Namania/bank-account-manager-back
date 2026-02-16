@@ -38,7 +38,7 @@ def update_account_balance(sender, instance: Transaction, created, **kwargs): # 
 @receiver(post_save, sender=Account)
 def first_transaction(sender, instance: Account, created, **kwargs): # pylint: disable=unused-argument
     if created:
-        amount = instance.balance
+        amount = instance.balance / 100
         instance.balance = 0
         instance.save()
 
