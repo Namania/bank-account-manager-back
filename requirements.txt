@@ -5,6 +5,7 @@ django-jazzmin
 django-filter
 django-money
 djangorestframework
+djangorestframework-simplejwt
 drf-redesign
 gunicorn
 markdown
