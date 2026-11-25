@@ -8,8 +8,8 @@ def updateBalance(sender, instance: Transaction, **kwargs): # pylint: disable=un
     account_sender = Account.objects.get(pk=instance.sender.pk)
     account_receiver = Account.objects.get(pk=instance.receiver.pk)
 
-    account_sender.balance += instance.amount * 100
-    account_receiver.balance -= instance.amount * 100
+    account_sender.balance += instance.amount
+    account_receiver.balance -= instance.amount
 
     account_sender.save()
     account_receiver.save()
@@ -20,22 +20,22 @@ def update_account_balance(sender, instance: Transaction, created, **kwargs): # 
         receiver_account = instance.receiver
         sender_account = instance.sender
 
-        if receiver_account.label != "Bank":
-            receiver_account.balance += instance.amount * 100
+        if not receiver_account.is_bank:
+            receiver_account.balance += instance.amount
             receiver_account.save()
 
-        if sender_account.label != "Bank":
-            sender_account.balance -= instance.amount * 100
+        if not sender_account.is_bank:
+            sender_account.balance -= instance.amount
             sender_account.save()
 
 @receiver(post_save, sender=Account)
 def first_transaction(sender, instance: Account, created, **kwargs): # pylint: disable=unused-argument
     if created:
-        amount = instance.balance / 100
+        amount = instance.balance
         instance.balance = 0
         instance.save()
 
-        bank = Account.objects.filter(label="Bank").first()
+        bank = Account.objects.filter(is_bank=True).first()
         if not bank:
             return
 

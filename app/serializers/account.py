@@ -1,10 +1,13 @@
 from rest_framework import serializers, viewsets
 from app.models.account import Account
+from app.serializers.fields import CentsField
 
 class AccountSerializer(serializers.ModelSerializer):
+    balance = CentsField(required=False)
+
     class Meta:
         model = Account
-        fields = ['id', 'owners', 'label', 'balance', 'create_at', 'isActive']
+        fields = ['id', 'owners', 'label', 'balance', 'create_at', 'isActive', 'is_bank']
 
 class AccountViewSet(viewsets.ModelViewSet):
     queryset = Account.objects.all()

@@ -8,12 +8,14 @@ from app.models.category import Category
 from app.models.transaction import Transaction
 from app.serializers.category import CategorySerializer
 from app.serializers.account import AccountSerializer
+from app.serializers.fields import CentsField
 
 class TransactionSerializer(serializers.ModelSerializer):
     category_details = CategorySerializer(source='category', read_only=True)
     receiver_details = AccountSerializer(source='receiver', read_only=True)
     sender_details = AccountSerializer(source='sender', read_only=True)
 
+    amount = CentsField()
     category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
     receiver = serializers.PrimaryKeyRelatedField(queryset=Account.objects.all())
     sender = serializers.PrimaryKeyRelatedField(queryset=Account.objects.all())

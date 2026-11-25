@@ -68,7 +68,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'app.apps.BankAppConfig',
-    'djmoney',
     'colorfield',
     'corsheaders',
     'django.contrib.admin',

@@ -1,5 +1,13 @@
 from django.contrib import admin
 
+from app.money import to_euros
+from .forms import AccountAdminForm
+
+
 class AccountAdmin(admin.ModelAdmin):
-    list_display = ["pk", "label", "create_at", "isPositive", "isActive"]
-    fields = ["owners", "label", "balance", "create_at", "isActive"]
+    form = AccountAdminForm
+    list_display = ["pk", "label", "balance_euros", "create_at", "isPositive", "isActive", "is_bank"]
+
+    @admin.display(description="Balance (€)", ordering="balance")
+    def balance_euros(self, obj):
+        return to_euros(obj.balance)
