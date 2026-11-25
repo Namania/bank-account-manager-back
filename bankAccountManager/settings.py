@@ -153,6 +153,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'app.middleware.SecurityHeadersMiddleware',
+    'app.middleware.AdminLoginThrottleMiddleware',
 ]
 
 ROOT_URLCONF = 'bankAccountManager.urls'

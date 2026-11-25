@@ -1,3 +1,4 @@
+from app.models import Account, Transaction
 from app.tests.base import ApiTestCase
 
 
@@ -91,3 +92,53 @@ class TransactionApiTests(ApiTestCase):
 
     def test_staff_can_use_any_account(self):
         self.assertEqual(self.post(self.staff, receiver=self.mallory_acc.id).status_code, 201)
+
+
+class TransactionWithForeignSideTests(ApiTestCase):
+    """A transaction between two users (created by staff or through a shared account)."""
+
+    def setUp(self):
+        self.shared_tx = Transaction.objects.create(sender=self.alice_acc, receiver=self.mallory_acc, amount=100)
+
+    def test_cannot_edit_amount_when_other_side_is_foreign(self):
+        response = self.as_user(self.mallory).patch(
+            f"/transactions/{self.shared_tx.id}/", {"amount": "5000.00"}, format="json"
+        )
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(self.balance(self.alice_acc), 99900)
+        self.assertEqual(self.balance(self.mallory_acc), 100)
+
+    def test_cannot_delete_when_other_side_is_foreign(self):
+        response = self.as_user(self.mallory).delete(f"/transactions/{self.shared_tx.id}/")
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(Transaction.objects.filter(pk=self.shared_tx.id).exists())
+        self.assertEqual(self.balance(self.alice_acc), 99900)
+
+    def test_can_still_read_it(self):
+        self.assertEqual(self.as_user(self.mallory).get(f"/transactions/{self.shared_tx.id}/").status_code, 200)
+
+    def test_staff_can_edit_it(self):
+        response = self.as_user(self.staff).patch(
+            f"/transactions/{self.shared_tx.id}/", {"amount": "2.00"}, format="json"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.balance(self.mallory_acc), 200)
+
+    def test_cannot_edit_transaction_of_deactivated_account(self):
+        own = Transaction.objects.create(sender=self.alice_acc, receiver=self.bank, amount=1000)
+        self.as_user(self.alice).delete(f"/accounts/{self.alice_acc.id}/")
+        before = self.balance(self.alice_acc)
+        response = self.as_user(self.alice).patch(f"/transactions/{own.id}/", {"amount": "500.00"}, format="json")
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(self.balance(self.alice_acc), before)
+
+    def test_transaction_with_deleted_side_stays_editable_and_deletable(self):
+        tmp = Account.objects.create(label="tmp")
+        orphan = Transaction.objects.create(sender=self.alice_acc, receiver=tmp, amount=1000)
+        before = self.balance(self.alice_acc)
+        tmp.delete()
+        client = self.as_user(self.alice)
+        self.assertEqual(client.patch(f"/transactions/{orphan.id}/", {"amount": "4.00"}, format="json").status_code, 200)
+        self.assertEqual(self.balance(self.alice_acc), before + 600)
+        self.assertEqual(client.delete(f"/transactions/{orphan.id}/").status_code, 204)
+        self.assertEqual(self.balance(self.alice_acc), before + 1000)

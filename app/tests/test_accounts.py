@@ -1,4 +1,5 @@
-from app.models import Account
+from app.models import Account, Transaction
+from app.serializers.account import AccountSerializer
 from app.tests.base import ApiTestCase
 
 
@@ -61,3 +62,13 @@ class AccountApiTests(ApiTestCase):
     def test_bank_endpoint_is_404_without_bank(self):
         self.bank.delete()
         self.assertEqual(self.as_user(self.mallory).get("/accounts/bank/").status_code, 404)
+
+    def test_rename_does_not_rewrite_balance_from_a_stale_copy(self):
+        stale = Account.objects.get(pk=self.alice_acc.pk)
+        Transaction.objects.create(sender=self.alice_acc, receiver=self.bank, amount=40000)
+        serializer = AccountSerializer(stale, data={"label": "Renommé"}, partial=True)
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        renamed = serializer.save()
+        self.assertEqual(self.balance(self.alice_acc), 60000)
+        self.assertEqual(renamed.balance, 60000)
+        self.assertEqual(Account.objects.get(pk=self.alice_acc.pk).label, "Renommé")

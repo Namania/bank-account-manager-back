@@ -8,11 +8,15 @@ _MIN_SECRET_KEY_LENGTH = 50
 
 
 def env_bool(name: str, default: bool = False) -> bool:
-    """Read a boolean flag; only 1/true/yes/on (any case) are true."""
-    raw = os.getenv(name)
-    if raw is None:
+    """Read a boolean flag; only 1/true/yes/on (any case) are true.
+
+    An empty value counts as unset: `HTTPS_ONLY=` in a .env file must fall back
+    to the default instead of silently switching a protection off.
+    """
+    raw = (os.getenv(name) or '').strip()
+    if not raw:
         return default
-    return raw.strip().lower() in _TRUE_VALUES
+    return raw.lower() in _TRUE_VALUES
 
 
 def env_list(name: str) -> list[str]:

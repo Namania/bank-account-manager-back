@@ -112,3 +112,12 @@ class AuthTests(APITestCase):
             for attempt in range(6)
         ]
         self.assertEqual(codes, [401] * 5 + [429])
+
+    def test_admin_login_is_throttled(self):
+        credentials = {"username": "alice", "password": "bad"}
+        codes = [self.client.post("/admin/login/", credentials).status_code for _ in range(6)]
+        self.assertEqual(codes, [200] * 5 + [429])
+
+    def test_admin_login_page_itself_is_not_throttled(self):
+        codes = {self.client.get("/admin/login/").status_code for _ in range(8)}
+        self.assertEqual(codes, {200})

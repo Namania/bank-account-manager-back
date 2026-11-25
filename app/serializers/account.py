@@ -20,7 +20,14 @@ class AccountSerializer(serializers.ModelSerializer):
         # The balance is only set at creation; afterwards it moves through
         # transactions (or the back-office).
         validated_data.pop('balance', None)
-        return super().update(instance, validated_data)
+        for field, value in validated_data.items():
+            setattr(instance, field, value)
+        # Write only what changed: saving the whole row would put back the
+        # balance read at the start of the request and erase any transaction
+        # committed in between.
+        instance.save(update_fields=list(validated_data))
+        instance.refresh_from_db(fields=['balance'])
+        return instance
 
 
 class AccountSummarySerializer(serializers.ModelSerializer):

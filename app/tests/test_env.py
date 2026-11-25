@@ -9,7 +9,7 @@ from bankAccountManager.env import env_bool, env_list, check_production_settings
 
 class EnvTests(SimpleTestCase):
     def test_env_bool(self):
-        cases = [("False", False), ("false", False), ("0", False), ("", False),
+        cases = [("False", False), ("false", False), ("0", False), ("no", False),
                  ("True", True), ("true", True), ("1", True), ("on", True)]
         for raw, expected in cases:
             with mock.patch.dict(os.environ, {"X_FLAG": raw}):
@@ -18,6 +18,13 @@ class EnvTests(SimpleTestCase):
     def test_env_bool_default_when_unset(self):
         self.assertIs(env_bool("X_UNSET_FLAG", default=True), True)
         self.assertIs(env_bool("X_UNSET_FLAG"), False)
+
+    def test_env_bool_empty_value_uses_default(self):
+        # `HTTPS_ONLY=` in a .env file must not silently turn a secure default off.
+        for raw in ["", "   "]:
+            with mock.patch.dict(os.environ, {"X_FLAG": raw}):
+                self.assertIs(env_bool("X_FLAG", default=True), True, repr(raw))
+                self.assertIs(env_bool("X_FLAG"), False, repr(raw))
 
     def test_env_list_strips_and_drops_empty(self):
         with mock.patch.dict(os.environ, {"X_LIST": " a.fr , b.fr,, "}):
