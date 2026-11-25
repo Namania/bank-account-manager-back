@@ -2,3 +2,6 @@
 __pycache__
 bankAccountManager/static/*
 .env
+staticfiles
+*.sqlite3
+.superpowers

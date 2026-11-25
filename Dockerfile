@@ -9,4 +9,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD sh -c "python manage.py makemigrations app && python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn bankAccountManager.wsgi:application --bind 0.0.0.0:5555"
+# Run as an unprivileged user; it only needs to write the collected static files.
+RUN useradd --system --no-create-home app && mkdir -p /app/staticfiles && chown -R app /app/staticfiles
+USER app
+
+# Migrations are generated in development and committed: never run makemigrations here.
+CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn bankAccountManager.wsgi:application --bind 0.0.0.0:5555"]
