@@ -41,7 +41,7 @@ class AccountApiTests(ApiTestCase):
     def test_delete_is_soft(self):
         self.assertEqual(self.as_user(self.alice).delete(f"/accounts/{self.alice_acc.id}/").status_code, 204)
         self.alice_acc.refresh_from_db()
-        self.assertFalse(self.alice_acc.isActive)
+        self.assertFalse(self.alice_acc.is_active)
 
     def test_non_staff_owner_cannot_modify_bank(self):
         self.bank.owners.add(self.mallory)
@@ -57,7 +57,7 @@ class AccountApiTests(ApiTestCase):
     def test_bank_endpoint_exposes_bank_summary_to_any_user(self):
         response = self.as_user(self.mallory).get("/accounts/bank/")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, {"id": self.bank.id, "label": "Bank", "isActive": True, "is_bank": True})
+        self.assertEqual(response.data, {"id": self.bank.id, "label": "Bank", "is_active": True, "is_bank": True})
 
     def test_bank_endpoint_is_404_without_bank(self):
         self.bank.delete()
@@ -72,3 +72,7 @@ class AccountApiTests(ApiTestCase):
         self.assertEqual(self.balance(self.alice_acc), 60000)
         self.assertEqual(renamed.balance, 60000)
         self.assertEqual(Account.objects.get(pk=self.alice_acc.pk).label, "Renommé")
+
+    def test_fields_use_snake_case(self):
+        data = self.as_user(self.alice).get(f"/accounts/{self.alice_acc.id}/").data
+        self.assertEqual(set(data), {"id", "owners", "label", "balance", "created_at", "is_active", "is_bank"})

@@ -7,8 +7,7 @@ from .forms import TransactionAdminForm
 
 class TransactionAdmin(ModelAdmin):
     form = TransactionAdminForm
-    list_display = ["sender", "receiver", "amount_euros", "comment", "category", "create_at"]
-    readonly_fields = ["create_at"]
+    list_display = ["sender", "receiver", "amount_euros", "comment", "category", "date"]
 
     @admin.display(description="Amount (€)", ordering="amount")
     def amount_euros(self, obj):

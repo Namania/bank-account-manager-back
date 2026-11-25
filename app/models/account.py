@@ -9,8 +9,8 @@ class Account(models.Model):
     label = models.CharField(max_length=200, verbose_name="Title")
     # Integer cents. Converted to euros at the API and back-office boundaries.
     balance = models.BigIntegerField(default=0, verbose_name="Balance (cents)")
-    create_at = models.DateTimeField(default=timezone.now, verbose_name="Create at")
-    isActive = models.BooleanField(default=True, verbose_name="Is Active")
+    created_at = models.DateTimeField(default=timezone.now, verbose_name="Create at")
+    is_active = models.BooleanField(default=True, verbose_name="Is Active")
     # The single counterparty account for external credits and debits.
     # Its own balance is never tracked.
     is_bank = models.BooleanField(default=False, verbose_name="Is Bank")
@@ -26,11 +26,8 @@ class Account(models.Model):
         boolean=True,
         description="Is Positive",
     )
-    def isPositive(self):
+    def is_positive(self):
         return self.balance >= 0
-
-    def getName(self):
-        return self.label if self.isActive else f"{self.label} (deleted)"
 
     def __str__(self):
         return str(self.label)

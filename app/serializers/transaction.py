@@ -1,8 +1,4 @@
-from django.db.models import Q
-from rest_framework import serializers, viewsets
-from rest_framework.decorators import action
-from rest_framework.exceptions import PermissionDenied
-from rest_framework.response import Response
+from rest_framework import serializers
 
 from app.models.account import Account
 from app.models.category import Category
@@ -18,7 +14,7 @@ class TransactionSerializer(serializers.ModelSerializer):
     sender_details = AccountSummarySerializer(source='sender', read_only=True)
 
     amount = CentsField()
-    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.none())
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.none(), allow_null=True, required=False)
     receiver = serializers.PrimaryKeyRelatedField(queryset=Account.objects.none())
     sender = serializers.PrimaryKeyRelatedField(queryset=Account.objects.none())
 
@@ -29,13 +25,17 @@ class TransactionSerializer(serializers.ModelSerializer):
             'sender',
             'receiver',
             'amount',
-            'comment', 
+            'comment',
             'category',
-            'create_at',
+            'date',
+            'created_at',
+            'is_opening',
             'category_details',
             'receiver_details',
             'sender_details'
         ]
+
+        read_only_fields = ['created_at', 'is_opening']
 
     def get_fields(self):
         fields = super().get_fields()
@@ -58,48 +58,3 @@ class TransactionSerializer(serializers.ModelSerializer):
         if sender is not None and sender == receiver:
             raise serializers.ValidationError("Sender and receiver must be different accounts.")
         return attrs
-
-class TransactionViewSet(viewsets.ModelViewSet):
-    queryset = Transaction.objects.all().order_by('id')
-    serializer_class = TransactionSerializer
-
-    def get_queryset(self):
-        user = self.request.user
-        return Transaction.objects.all().order_by('create_at').reverse() if user.is_staff else Transaction.objects.filter(Q(sender__owners=user) | Q(receiver__owners=user)).distinct().order_by('create_at').reverse()
-
-    def _require_both_sides_usable(self, transaction):
-        """Seeing a transaction is not enough to change it.
-
-        Editing or deleting moves the balance of both accounts, so both stored
-        sides must be accounts the caller may use. A side whose account was
-        deleted is ignored.
-        """
-        user = self.request.user
-        if user.is_staff:
-            return
-        usable_ids = set(usable_accounts(user).values_list('pk', flat=True))
-        stored_ids = {transaction.sender_id, transaction.receiver_id} - {None}
-        if not stored_ids <= usable_ids:
-            raise PermissionDenied("This transaction involves an account you cannot use.")
-
-    def perform_update(self, serializer):
-        self._require_both_sides_usable(serializer.instance)
-        serializer.save()
-
-    def perform_destroy(self, instance):
-        self._require_both_sides_usable(instance)
-        instance.delete()
-
-    @action(detail=False, url_path=r'by_account/(?P<account_id>\d+)')
-    def by_account(self, _, account_id=None):
-        queryset = self.get_queryset().filter(
-            Q(sender_id=account_id) | Q(receiver_id=account_id)
-        )
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)

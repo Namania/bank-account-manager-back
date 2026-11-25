@@ -47,7 +47,7 @@ class MoneyApiTests(ApiTestCase):
         self.assertEqual(str(form["balance"].value()), "1000.00")
 
     def test_back_office_saves_balance_in_cents(self):
-        data = {"label": "Alice", "balance": "10.50", "create_at": "2026-01-01 10:00:00", "isActive": "on"}
+        data = {"label": "Alice", "balance": "10.50", "created_at": "2026-01-01 10:00:00", "is_active": "on"}
         form = AccountAdminForm(data, instance=self.alice_acc)
         self.assertTrue(form.is_valid(), form.errors)
         form.save()

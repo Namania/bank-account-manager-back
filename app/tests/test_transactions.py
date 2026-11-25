@@ -1,3 +1,7 @@
+import datetime
+
+from django.utils import timezone
+
 from app.models import Account, Transaction
 from app.tests.base import ApiTestCase
 
@@ -34,7 +38,7 @@ class TransactionApiTests(ApiTestCase):
         self.assert_rejected(self.post(self.alice, receiver=self.alice_acc.id))
 
     def test_inactive_account_is_rejected(self):
-        self.alice_acc.isActive = False
+        self.alice_acc.is_active = False
         self.alice_acc.save()
         self.assert_rejected(self.post(self.alice))
 
@@ -69,7 +73,7 @@ class TransactionApiTests(ApiTestCase):
 
     def test_details_do_not_leak_balance_or_owners(self):
         details = self.post(self.alice).data["sender_details"]
-        self.assertEqual(set(details), {"id", "label", "isActive", "is_bank"})
+        self.assertEqual(set(details), {"id", "label", "is_active", "is_bank"})
 
     def test_foreign_transaction_is_invisible(self):
         tx_id = self.post(self.alice).data["id"]
@@ -142,3 +146,46 @@ class TransactionWithForeignSideTests(ApiTestCase):
         self.assertEqual(self.balance(self.alice_acc), before + 600)
         self.assertEqual(client.delete(f"/transactions/{orphan.id}/").status_code, 204)
         self.assertEqual(self.balance(self.alice_acc), before + 1000)
+
+
+class TransactionFieldTests(ApiTestCase):
+    def post(self, **overrides):
+        data = {"sender": self.alice_acc.id, "receiver": self.bank.id, "amount": "10.00"}
+        data.update(overrides)
+        return self.as_user(self.alice).post("/transactions/", data, format="json")
+
+    def test_category_is_optional(self):
+        self.assertEqual(self.post().status_code, 201)
+        response = self.post(category=None)
+        self.assertEqual(response.status_code, 201)
+        self.assertIsNone(response.data["category"])
+
+    def test_category_can_be_cleared(self):
+        tx_id = self.post(category=self.category.id).data["id"]
+        response = self.as_user(self.alice).patch(f"/transactions/{tx_id}/", {"category": None}, format="json")
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(response.data["category"])
+
+    def test_date_defaults_to_today(self):
+        self.assertEqual(self.post().data["date"], timezone.localdate().isoformat())
+
+    def test_date_of_operation_can_be_set(self):
+        response = self.post(date="2026-01-15")
+        self.assertEqual(response.data["date"], "2026-01-15")
+        self.assertEqual(Transaction.objects.get(pk=response.data["id"]).date, datetime.date(2026, 1, 15))
+
+    def test_created_at_is_read_only(self):
+        response = self.post(created_at="2001-01-01T00:00:00Z")
+        self.assertFalse(response.data["created_at"].startswith("2001"))
+
+    def test_list_is_ordered_by_operation_date_newest_first(self):
+        self.post(date="2026-03-01", comment="mars")
+        self.post(date="2026-05-01", comment="mai")
+        self.post(date="2026-04-01", comment="avril")
+        comments = [tx["comment"] for tx in self.as_user(self.alice).get("/transactions/").data["results"]]
+        self.assertEqual([c for c in comments if c in ("mars", "avril", "mai")], ["mai", "avril", "mars"])
+
+    def test_opening_transaction_is_flagged(self):
+        rows = self.as_user(self.alice).get("/transactions/").data["results"]
+        self.assertEqual([tx["is_opening"] for tx in rows], [True])
+        self.assertFalse(self.post().data["is_opening"])

@@ -7,7 +7,7 @@ from .forms import AccountAdminForm
 
 class AccountAdmin(ModelAdmin):
     form = AccountAdminForm
-    list_display = ["pk", "label", "balance_euros", "create_at", "isPositive", "isActive", "is_bank"]
+    list_display = ["pk", "label", "balance_euros", "created_at", "is_positive", "is_active", "is_bank"]
 
     @admin.display(description="Balance (€)", ordering="balance")
     def balance_euros(self, obj):

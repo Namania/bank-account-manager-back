@@ -4,10 +4,7 @@ from django.urls import path, include
 from rest_framework import routers
 
 from app.auth import CsrfView, LoginView, LogoutView, RefreshView
-from app.serializers.account import AccountViewSet
-from app.serializers.category import CategoryViewSet
-from app.serializers.transaction import TransactionViewSet
-from app.serializers.user import UserViewSet
+from app.views import AccountViewSet, CategoryViewSet, TransactionViewSet, UserViewSet
 
 router = routers.DefaultRouter()
 router.register(r'accounts', AccountViewSet)

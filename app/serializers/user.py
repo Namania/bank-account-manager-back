@@ -1,7 +1,6 @@
 from django.contrib.auth.models import User
-from rest_framework import mixins, serializers, viewsets
-from rest_framework.decorators import action
-from rest_framework.response import Response
+from django.contrib.auth import password_validation
+from rest_framework import serializers
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -11,24 +10,15 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'is_staff']
 
 
-class UserViewSet(mixins.ListModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.UpdateModelMixin,
-                  viewsets.GenericViewSet):
-    """Read and edit profiles. Accounts are created and removed in the back-office only."""
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+class PasswordChangeSerializer(serializers.Serializer):  # pylint: disable=abstract-method
+    current_password = serializers.CharField(write_only=True)
+    new_password = serializers.CharField(write_only=True)
 
-    def get_queryset(self):
-        user = self.request.user
-        return User.objects.all().order_by('id') if user.is_staff else User.objects.filter(id=user.id).order_by('id')
+    def validate_current_password(self, value):
+        if not self.context['request'].user.check_password(value):
+            raise serializers.ValidationError("The current password is incorrect.")
+        return value
 
-    @action(detail=False, methods=['get', 'patch'])
-    def me(self, request):
-        if request.method == 'PATCH':
-            serializer = self.get_serializer(request.user, data=request.data, partial=True)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-        else:
-            serializer = self.get_serializer(request.user)
-        return Response(serializer.data)
+    def validate_new_password(self, value):
+        password_validation.validate_password(value, self.context['request'].user)
+        return value

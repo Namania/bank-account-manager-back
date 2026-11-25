@@ -58,6 +58,8 @@ def open_account(account: Account) -> None:
     with transaction.atomic():
         Account.objects.filter(pk=account.pk).update(balance=0)
         if opening >= 0:
-            Transaction.objects.create(sender=bank, receiver=account, amount=opening, comment=OPENING_COMMENT)
+            Transaction.objects.create(sender=bank, receiver=account, amount=opening, comment=OPENING_COMMENT,
+                                       is_opening=True)
         else:
-            Transaction.objects.create(sender=account, receiver=bank, amount=-opening, comment=OPENING_COMMENT)
+            Transaction.objects.create(sender=account, receiver=bank, amount=-opening, comment=OPENING_COMMENT,
+                                       is_opening=True)

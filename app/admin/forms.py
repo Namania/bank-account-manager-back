@@ -30,7 +30,7 @@ class AccountAdminForm(forms.ModelForm):
 
     class Meta:
         model = Account
-        fields = ["owners", "label", "balance", "create_at", "isActive", "is_bank"]
+        fields = ["owners", "label", "balance", "created_at", "is_active", "is_bank"]
 
 
 class TransactionAdminForm(forms.ModelForm):
@@ -38,4 +38,4 @@ class TransactionAdminForm(forms.ModelForm):
 
     class Meta:
         model = Transaction
-        fields = ["sender", "receiver", "amount", "comment", "category"]
+        fields = ["sender", "receiver", "amount", "comment", "category", "date"]

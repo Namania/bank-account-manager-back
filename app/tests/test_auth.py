@@ -6,7 +6,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from app.tests.base import PASSWORD
 
 
-class AuthTests(APITestCase):
+class AuthTests(APITestCase):  # pylint: disable=too-many-public-methods
     def setUp(self):
         cache.clear()  # throttling counters live in the cache
         self.user = User.objects.create_user("alice", password=PASSWORD)
@@ -121,3 +121,23 @@ class AuthTests(APITestCase):
     def test_admin_login_page_itself_is_not_throttled(self):
         codes = {self.client.get("/admin/login/").status_code for _ in range(8)}
         self.assertEqual(codes, {200})
+
+    def test_login_only_accepts_json(self):
+        # A cross-site HTML form cannot send JSON, so it cannot log a victim in.
+        response = self.client.post("/token/", {"username": "alice", "password": PASSWORD})
+        self.assertEqual(response.status_code, 415)
+        self.assertNotIn("access_token", response.cookies)
+
+    def test_refresh_for_deleted_user_is_401_and_clears_cookies(self):
+        self.login()
+        self.user.delete()
+        response = self.client.post("/token/refresh/")
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.cookies["access_token"].value, "")
+
+    def test_refresh_for_deactivated_user_is_401_and_clears_cookies(self):
+        self.login()
+        User.objects.filter(pk=self.user.pk).update(is_active=False)
+        response = self.client.post("/token/refresh/")
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.cookies["access_token"].value, "")

@@ -7,9 +7,12 @@ import logging
 
 from django.conf import settings
 from django.contrib.auth.signals import user_login_failed
+from django.core.exceptions import ObjectDoesNotExist
 from django.dispatch import receiver
 from django.middleware.csrf import get_token
 from rest_framework import status
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.parsers import JSONParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -61,6 +64,10 @@ class _TokenView(APIView):
 
 class LoginView(_TokenView):
     throttle_scope = "token"
+    # JSON only: an HTML form on another site cannot send it, and a cross-site
+    # script needs a CORS preflight that only the allowed origins pass. That
+    # prevents logging a victim's browser into someone else's account.
+    parser_classes = [JSONParser]
 
     def post(self, request):
         serializer = TokenObtainPairSerializer(data=request.data, context={"request": request})
@@ -78,7 +85,8 @@ class RefreshView(_TokenView):
         serializer = TokenRefreshSerializer(data={"refresh": request.COOKIES.get(settings.AUTH_COOKIE_REFRESH, "")})
         try:
             valid = serializer.is_valid()
-        except TokenError:
+        except (TokenError, AuthenticationFailed, ObjectDoesNotExist):
+            # Bad, expired or revoked token; deactivated or deleted user.
             valid = False
         if not valid:
             response = Response({"detail": "Refresh token is missing, expired or revoked."},

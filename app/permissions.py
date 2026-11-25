@@ -9,7 +9,7 @@ def usable_accounts(user):
     """Accounts a user may put on either side of a transaction."""
     if user.is_staff:
         return Account.objects.all()
-    return Account.objects.filter(Q(owners=user, isActive=True) | Q(is_bank=True)).distinct()
+    return Account.objects.filter(Q(owners=user, is_active=True) | Q(is_bank=True)).distinct()
 
 
 def visible_categories(user):
