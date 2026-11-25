@@ -1,10 +1,11 @@
 from django.contrib import admin
+from unfold.admin import ModelAdmin
 
 from app.money import to_euros
 from .forms import AccountAdminForm
 
 
-class AccountAdmin(admin.ModelAdmin):
+class AccountAdmin(ModelAdmin):
     form = AccountAdminForm
     list_display = ["pk", "label", "balance_euros", "create_at", "isPositive", "isActive", "is_bank"]
 

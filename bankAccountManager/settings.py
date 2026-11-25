@@ -5,6 +5,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from django.core.exceptions import ImproperlyConfigured
+from django.templatetags.static import static
 
 from .env import env_bool, env_list, check_production_settings
 
@@ -80,7 +81,7 @@ CORS_ALLOW_METHODS = [
 ]
 
 INSTALLED_APPS = [
-    'jazzmin',
+    'unfold',
     'drf_redesign',
     'rest_framework',
     'rest_framework_simplejwt',
@@ -96,12 +97,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-JAZZMIN_SETTINGS = {
-    "site_title": "Bank Account Manager",
-    "site_header": "Account Manager",
-    "site_brand": "Account Manager",
-    "welcome_sign": "Welcome to bank account manager !",
-    "site_logo": "/logo.png",
+UNFOLD = {
+    "SITE_TITLE": "Bank Account Manager",
+    "SITE_HEADER": "Account Manager",
+    "SITE_ICON": lambda request: static("logo.png"),
+    "SITE_FAVICONS": [
+        {"rel": "icon", "type": "image/png", "href": lambda request: static("logo.png")},
+    ],
 }
 
 REST_FRAMEWORK = {

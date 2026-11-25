@@ -1,6 +1,6 @@
-from django.contrib import admin
+from unfold.admin import ModelAdmin
 
 
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(ModelAdmin):
     list_display = ["label", "color", "owner"]
     fields = ["label", "color", "owner"]

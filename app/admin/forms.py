@@ -1,4 +1,5 @@
 from django import forms
+from unfold.widgets import UnfoldAdminDecimalFieldWidget
 
 from app.models import Account, Transaction
 from app.money import to_cents, to_euros
@@ -10,6 +11,7 @@ class EuroFormField(forms.DecimalField):
     def __init__(self, **kwargs):
         kwargs.setdefault("max_digits", 14)
         kwargs.setdefault("decimal_places", 2)
+        kwargs.setdefault("widget", UnfoldAdminDecimalFieldWidget)
         super().__init__(**kwargs)
 
     def prepare_value(self, value):
