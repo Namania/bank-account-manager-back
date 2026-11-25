@@ -26,6 +26,17 @@ migrate:
 test:
 	python manage.py test app $(TEST_SETTINGS)
 
+test-postgres:
+	env $$(grep '^POSTGRES_' .env | xargs) POSTGRES_HOST=localhost TEST_DATABASE=postgres \
+		python manage.py test app $(TEST_SETTINGS) --noinput
+
+maintenance:
+ifndef state
+	$(error state must be set, make maintenance state=on message="Back at 2pm")
+else
+	docker exec -it $(API_CONTAINER) python manage.py maintenance $(state) --message "$(message)"
+endif
+
 check:
 	pylint $$(git ls-files '*.py')
 
@@ -49,6 +60,8 @@ help:
 	echo "    migrations  Generate migrations locally (commit the result)"
 	echo "    migrate     Apply migrations inside the API container"
 	echo "    test        Run the test suite (SQLite, no services needed)"
+	echo "    test-postgres  Run the test suite on the compose PostgreSQL (needs make up)"
+	echo "    maintenance Switch maintenance mode (make maintenance state=on message=...)"
 	echo "    check       Run pylint"
 	echo "    audit       Run pip-audit and bandit"
 	echo "    run         Run a manage.py command in the container (ex: make run cmd=createsuperuser)"

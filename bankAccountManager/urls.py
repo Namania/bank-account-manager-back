@@ -6,7 +6,7 @@ from rest_framework import routers
 
 from app.auth import CsrfView, LoginView, LogoutView, RefreshView
 from app.views import (
-    AccountViewSet, BudgetViewSet, CategoryViewSet, RecurringTransactionViewSet, StatsViewSet,
+    AccountViewSet, BudgetViewSet, CategoryViewSet, HealthView, RecurringTransactionViewSet, StatsViewSet,
     TransactionViewSet, UserViewSet,
 )
 
@@ -27,6 +27,7 @@ urlpatterns = [
     path('token/logout/', LogoutView.as_view(), name='token_logout'),
     path('csrf/', CsrfView.as_view(), name='csrf'),
     path('schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('health/', HealthView.as_view(), name='health'),
 ]
 
 if settings.DEBUG:

@@ -3,9 +3,6 @@ services:
     build: .
     container_name: bank-account-mngt-api
     restart: unless-stopped
-    # Reachable from this host only: the TLS reverse proxy is the public entry
-    # point. A client reaching gunicorn directly could forge X-Forwarded-For and
-    # X-Forwarded-Proto.
     ports:
       - "127.0.0.1:5555:5555"
     env_file:
@@ -13,6 +10,23 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os, urllib.request as u; u.urlopen(u.Request('http://127.0.0.1:5555/health/', headers={'Host': os.environ['ALLOWED_HOSTS'].split(',')[0].strip()}), timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  scheduler:
+    build: .
+    container_name: bank-account-mngt-scheduler
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      api:
+        condition: service_healthy
+    command: ["sh", "-c", "while true; do python manage.py run_recurring; sleep 3600; done"]
 
   db:
     image: postgres:16
@@ -23,7 +37,6 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    # Reachable from the host only, for local tooling. The API uses the compose network.
     ports:
       - "127.0.0.1:${POSTGRES_PORT}:${POSTGRES_PORT}"
     healthcheck:

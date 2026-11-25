@@ -48,6 +48,8 @@ if not DEBUG:
 HTTPS_ONLY = env_bool('HTTPS_ONLY', default=not DEBUG)
 if HTTPS_ONLY:
     SECURE_SSL_REDIRECT = True
+    # The container health check calls gunicorn directly, over plain HTTP.
+    SECURE_REDIRECT_EXEMPT = [r'^health/$']
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
@@ -185,6 +187,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'app.middleware.SecurityHeadersMiddleware',
     'app.middleware.AdminLoginThrottleMiddleware',
+    'app.middleware.MaintenanceMiddleware',
 ]
 
 ROOT_URLCONF = 'bankAccountManager.urls'

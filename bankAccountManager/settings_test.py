@@ -20,6 +20,9 @@ for _key, _value in _TEST_ENV.items():
 
 from .settings import *
 
-DATABASES['default'].update(ENGINE='django.db.backends.sqlite3', NAME=':memory:')
+# SQLite by default: fast, no service needed. TEST_DATABASE=postgres keeps the
+# PostgreSQL settings from the environment, to exercise row locks for real.
+if os.getenv('TEST_DATABASE') != 'postgres':
+    DATABASES['default'].update(ENGINE='django.db.backends.sqlite3', NAME=':memory:')
 
 PASSWORD_HASHERS = ['django.contrib.auth.hashers.MD5PasswordHasher']

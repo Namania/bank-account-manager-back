@@ -1,7 +1,10 @@
 from django.conf import settings
-from django.http import HttpResponse
+from django.db import DatabaseError
+from django.http import HttpResponse, JsonResponse
 from django.urls import reverse
 from rest_framework.throttling import SimpleRateThrottle
+
+from app.models.site import SiteSetting
 
 API_CSP = "default-src 'none'; frame-ancestors 'none'"
 PERMISSIONS_POLICY = "geolocation=(), camera=(), microphone=()"
@@ -45,4 +48,29 @@ class AdminLoginThrottleMiddleware:
         if request.method == "POST" and request.path == reverse("admin:login"):
             if not _AdminLoginRateThrottle().allow_request(request, None):
                 return HttpResponse("Too many login attempts. Try again in a minute.", status=429)
+        return self.get_response(request)
+
+
+# Still reachable during maintenance: the status itself, the back-office that
+# switches it off, and signing in (staff need a session to use PATCH /health/).
+_MAINTENANCE_EXEMPT_PREFIXES = ("/health/", "/admin/", "/static/", "/token/", "/csrf/")
+
+
+class MaintenanceMiddleware:
+    """Answer 503 to the API while maintenance is switched on."""
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if not request.path.startswith(_MAINTENANCE_EXEMPT_PREFIXES):
+            try:
+                row = SiteSetting.objects.filter(pk=1, maintenance=True).values_list("maintenance_message").first()
+            except DatabaseError:
+                row = None  # the request will fail on its own if the database is really down
+            if row is not None:
+                return JsonResponse(
+                    {"detail": "The application is under maintenance.", "maintenance": True, "message": row[0]},
+                    status=503,
+                )
         return self.get_response(request)
