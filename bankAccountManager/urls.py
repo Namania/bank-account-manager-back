@@ -5,7 +5,10 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework import routers
 
 from app.auth import CsrfView, LoginView, LogoutView, RefreshView
-from app.views import AccountViewSet, CategoryViewSet, StatsViewSet, TransactionViewSet, UserViewSet
+from app.views import (
+    AccountViewSet, BudgetViewSet, CategoryViewSet, RecurringTransactionViewSet, StatsViewSet,
+    TransactionViewSet, UserViewSet,
+)
 
 router = routers.DefaultRouter()
 router.register(r'accounts', AccountViewSet)
@@ -13,6 +16,8 @@ router.register(r'categories', CategoryViewSet)
 router.register(r'transactions', TransactionViewSet)
 router.register(r'users', UserViewSet)
 router.register(r'stats', StatsViewSet, basename='stats')
+router.register(r'recurring-transactions', RecurringTransactionViewSet)
+router.register(r'budgets', BudgetViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

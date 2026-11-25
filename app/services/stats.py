@@ -34,6 +34,17 @@ def _in_range(queryset, date_from, date_to):
     return queryset
 
 
+def expense_by_category(account_ids, date_from, date_to) -> dict:
+    """Expense in cents per category id, for budgets."""
+    rows = (
+        _in_range(_touching(account_ids), date_from, date_to)
+        .order_by()
+        .values("category_id")
+        .annotate(expense=_flows(account_ids)["expense"])
+    )
+    return {row["category_id"]: row["expense"] for row in rows}
+
+
 def by_category(account_ids, date_from=None, date_to=None):
     rows = (
         _in_range(_touching(account_ids), date_from, date_to)

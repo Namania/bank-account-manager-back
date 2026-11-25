@@ -1,7 +1,7 @@
 from django import forms
 from unfold.widgets import UnfoldAdminDecimalFieldWidget
 
-from app.models import Account, Transaction
+from app.models import Account, Budget, RecurringTransaction, Transaction
 from app.money import to_cents, to_euros
 
 
@@ -39,3 +39,20 @@ class TransactionAdminForm(forms.ModelForm):
     class Meta:
         model = Transaction
         fields = ["sender", "receiver", "amount", "comment", "category", "date"]
+
+
+class RecurringTransactionAdminForm(forms.ModelForm):
+    amount = EuroFormField(label="Amount (€)", min_value=0)
+
+    class Meta:
+        model = RecurringTransaction
+        fields = ["owner", "sender", "receiver", "amount", "comment", "category", "frequency",
+                  "start_date", "end_date", "next_date", "is_active"]
+
+
+class BudgetAdminForm(forms.ModelForm):
+    amount = EuroFormField(label="Monthly limit (€)", min_value=0)
+
+    class Meta:
+        model = Budget
+        fields = ["owner", "category", "amount"]

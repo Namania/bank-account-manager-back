@@ -8,7 +8,8 @@ from app.serializers.category import CategorySerializer
 from app.serializers.account import AccountSummarySerializer
 from app.serializers.fields import CentsField
 
-class TransactionSerializer(serializers.ModelSerializer):
+class TransferSerializer(serializers.ModelSerializer):
+    """Fields and rules shared by anything that moves money between two accounts."""
     category_details = CategorySerializer(source='category', read_only=True)
     receiver_details = AccountSummarySerializer(source='receiver', read_only=True)
     sender_details = AccountSummarySerializer(source='sender', read_only=True)
@@ -17,25 +18,6 @@ class TransactionSerializer(serializers.ModelSerializer):
     category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.none(), allow_null=True, required=False)
     receiver = serializers.PrimaryKeyRelatedField(queryset=Account.objects.none())
     sender = serializers.PrimaryKeyRelatedField(queryset=Account.objects.none())
-
-    class Meta:
-        model = Transaction
-        fields = [
-            'id',
-            'sender',
-            'receiver',
-            'amount',
-            'comment',
-            'category',
-            'date',
-            'created_at',
-            'is_opening',
-            'category_details',
-            'receiver_details',
-            'sender_details'
-        ]
-
-        read_only_fields = ['created_at', 'is_opening']
 
     def get_fields(self):
         fields = super().get_fields()
@@ -61,3 +43,26 @@ class TransactionSerializer(serializers.ModelSerializer):
         if sender is not None and sender == receiver:
             raise serializers.ValidationError("Sender and receiver must be different accounts.")
         return attrs
+
+
+class TransactionSerializer(TransferSerializer):
+
+    class Meta:
+        model = Transaction
+        fields = [
+            'id',
+            'sender',
+            'receiver',
+            'amount',
+            'comment',
+            'category',
+            'date',
+            'created_at',
+            'is_opening',
+            'recurring',
+            'category_details',
+            'receiver_details',
+            'sender_details'
+        ]
+
+        read_only_fields = ['created_at', 'is_opening', 'recurring']

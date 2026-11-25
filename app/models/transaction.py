@@ -18,6 +18,9 @@ class Transaction(models.Model):
     # The initial balance of an account, recorded as its first transaction.
     # Kept out of income and expense statistics.
     is_opening = models.BooleanField(default=False)
+    # The rule that generated this transaction, if any.
+    recurring = models.ForeignKey("app.RecurringTransaction", on_delete=models.SET_NULL, null=True, blank=True,
+                                  related_name="generated", editable=False)
 
     class Meta:
         ordering = ["-date", "-id"]
