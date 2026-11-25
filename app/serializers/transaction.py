@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from app.models.account import Account
 from app.models.category import Category
 from app.models.transaction import Transaction
-from app.permissions import usable_accounts
+from app.permissions import usable_accounts, visible_categories
 from app.serializers.category import CategorySerializer
 from app.serializers.account import AccountSummarySerializer
 from app.serializers.fields import CentsField
@@ -17,7 +17,7 @@ class TransactionSerializer(serializers.ModelSerializer):
     sender_details = AccountSummarySerializer(source='sender', read_only=True)
 
     amount = CentsField()
-    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.none())
     receiver = serializers.PrimaryKeyRelatedField(queryset=Account.objects.none())
     sender = serializers.PrimaryKeyRelatedField(queryset=Account.objects.none())
 
@@ -38,7 +38,9 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     def get_fields(self):
         fields = super().get_fields()
-        accounts = usable_accounts(self.context['request'].user)
+        user = self.context['request'].user
+        accounts = usable_accounts(user)
+        fields['category'].queryset = visible_categories(user)
         fields['sender'].queryset = accounts
         fields['receiver'].queryset = accounts
         return fields
