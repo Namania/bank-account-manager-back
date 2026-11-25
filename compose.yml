@@ -4,7 +4,7 @@ services:
     container_name: bank-account-mngt-api
     restart: unless-stopped
     ports:
-      - "127.0.0.1:5555:5555"
+      - "${PORT:-5555}:5555"
     env_file:
       - .env
     depends_on:
