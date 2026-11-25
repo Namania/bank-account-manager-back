@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.models import Group, User
+from django.contrib.staticfiles import finders
 from unfold.admin import ModelAdmin as UnfoldModelAdmin
 
 from app.models import Account, Category, Transaction
@@ -45,3 +46,13 @@ class BackOfficeThemeTests(ApiTestCase):
     def test_balance_is_still_edited_in_euros(self):
         response = self.client.get(f"/admin/app/account/{self.alice_acc.id}/change/")
         self.assertContains(response, 'value="1000.00"')
+
+    def test_theme_uses_the_logo_green(self):
+        primary = settings.UNFOLD["COLORS"]["primary"]
+        self.assertEqual(primary["500"], "oklch(69.6% 0.17 162.48)")  # Tailwind emerald-500
+        self.assertEqual(set(primary), {"50", "100", "200", "300", "400", "500", "600", "700", "800", "900", "950"})
+
+    def test_logo_is_the_vector_mark(self):
+        self.assertIsNotNone(finders.find("logo.svg"))
+        response = self.client.get("/admin/")
+        self.assertContains(response, "/static/logo.svg")
