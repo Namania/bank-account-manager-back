@@ -42,6 +42,8 @@ make audit           # pip-audit and bandit
 
 Migrations are generated locally with `make migrations` and committed. The container only applies them.
 
+`make seed` fills a development database with fictional data: two users, `alice` and `bruno` (password `demo-password`), their accounts and a joint one, six months of transactions, recurring rules and budgets. It only runs with `DEBUG` on and refuses to touch a database that already has accounts; `make seed args=--reset` deletes the accounts, transactions, categories, rules and budgets first, and keeps your other users.
+
 The OpenAPI schema is served at `/schema/` (signed-in users). With `DEBUG` on, an interactive version is at `/docs/`.
 
 ## Concepts

@@ -30,6 +30,9 @@ test-postgres:
 	env $$(grep '^POSTGRES_' .env | xargs) POSTGRES_HOST=localhost TEST_DATABASE=postgres \
 		python manage.py test app $(TEST_SETTINGS) --noinput
 
+seed:
+	docker exec -it $(API_CONTAINER) python manage.py seed $(args)
+
 maintenance:
 ifndef state
 	$(error state must be set, make maintenance state=on message="Back at 2pm")
@@ -61,6 +64,7 @@ help:
 	echo "    migrate     Apply migrations inside the API container"
 	echo "    test        Run the test suite (SQLite, no services needed)"
 	echo "    test-postgres  Run the test suite on the compose PostgreSQL (needs make up)"
+	echo "    seed        Fill the dev database with fictional data (args=--reset to start again)"
 	echo "    maintenance Switch maintenance mode (make maintenance state=on message=...)"
 	echo "    check       Run pylint"
 	echo "    audit       Run pip-audit and bandit"
