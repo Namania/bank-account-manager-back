@@ -3,8 +3,6 @@ services:
     build: .
     container_name: bank-account-mngt-api
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:${PORT:-5555}:5555"
     env_file:
       - .env
     depends_on:
@@ -16,6 +14,9 @@ services:
       timeout: 5s
       retries: 3
       start_period: 30s
+    networks:
+      - proxy
+      - default
 
   scheduler:
     build: .
@@ -49,3 +50,7 @@ services:
 
 volumes:
   db_data:
+
+networks:
+  proxy:
+    external: true
