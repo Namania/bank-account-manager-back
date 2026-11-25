@@ -1,42 +1,30 @@
-from django.db.models.signals import pre_delete
-from django.db.models.signals import post_save
+"""Thin triggers: every balance change is delegated to the ledger service."""
+from django.db.models.signals import post_save, pre_delete, pre_save
 from django.dispatch import receiver
-from .models import Transaction, Account
 
-@receiver(pre_delete, sender=Transaction)
-def updateBalance(sender, instance: Transaction, **kwargs): # pylint: disable=unused-argument
-    account_sender = Account.objects.get(pk=instance.sender.pk)
-    account_receiver = Account.objects.get(pk=instance.receiver.pk)
+from .models import Account, Transaction
+from .services import ledger
 
-    account_sender.balance += instance.amount
-    account_receiver.balance -= instance.amount
+# pylint: disable=unused-argument
 
-    account_sender.save()
-    account_receiver.save()
+@receiver(pre_save, sender=Transaction)
+def revert_previous_version(sender, instance: Transaction, **kwargs):
+    """An edited transaction first undoes what its stored version did."""
+    if instance.pk is None:
+        return
+    previous = Transaction.objects.filter(pk=instance.pk).first()
+    if previous is not None:
+        ledger.revert_transaction(previous)
 
 @receiver(post_save, sender=Transaction)
-def update_account_balance(sender, instance: Transaction, created, **kwargs): # pylint: disable=unused-argument
-    if created:
-        receiver_account = instance.receiver
-        sender_account = instance.sender
+def apply_saved_transaction(sender, instance: Transaction, **kwargs):
+    ledger.apply_transaction(instance)
 
-        if not receiver_account.is_bank:
-            receiver_account.balance += instance.amount
-            receiver_account.save()
-
-        if not sender_account.is_bank:
-            sender_account.balance -= instance.amount
-            sender_account.save()
+@receiver(pre_delete, sender=Transaction)
+def revert_deleted_transaction(sender, instance: Transaction, **kwargs):
+    ledger.revert_transaction(instance)
 
 @receiver(post_save, sender=Account)
-def first_transaction(sender, instance: Account, created, **kwargs): # pylint: disable=unused-argument
+def open_new_account(sender, instance: Account, created, **kwargs):
     if created:
-        amount = instance.balance
-        instance.balance = 0
-        instance.save()
-
-        bank = Account.objects.filter(is_bank=True).first()
-        if not bank:
-            return
-
-        Transaction.objects.create(sender=bank, receiver=instance, amount=amount, comment="Création du compte")
+        ledger.open_account(instance)
