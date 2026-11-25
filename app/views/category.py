@@ -10,8 +10,11 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all().order_by('id')
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticated, IsOwnerOrStaffOrReadOnly]
+    pagination_class = None  # a short list, shown whole in pickers
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return Category.objects.none()
         return visible_categories(self.request.user).order_by('id')
 
     def perform_create(self, serializer):

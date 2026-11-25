@@ -85,6 +85,7 @@ INSTALLED_APPS = [
     'drf_redesign',
     'rest_framework',
     'rest_framework_simplejwt',
+    'drf_spectacular',
     'rest_framework_simplejwt.token_blacklist',
     'app.apps.BankAppConfig',
     'colorfield',
@@ -133,6 +134,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     # Only views that declare a throttle_scope are limited (the token endpoints).
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.ScopedRateThrottle',
@@ -147,6 +149,14 @@ REST_FRAMEWORK = {
     'NUM_PROXIES': int(os.getenv('NUM_PROXIES') or 1),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 100,
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Bank Account Manager API',
+    'DESCRIPTION': 'Amounts are decimal euros as strings ("10.50"). Authentication uses HttpOnly cookies; '
+                   'every write needs the X-CSRFToken header.',
+    'VERSION': '1.0.0',
+    'SERVE_PERMISSIONS': ['rest_framework.permissions.IsAuthenticated'],
 }
 
 if DEBUG:

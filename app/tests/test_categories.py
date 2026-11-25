@@ -28,7 +28,7 @@ class CategoryApiTests(ApiTestCase):
     def test_private_category_is_hidden_from_others(self):
         private = Category.objects.create(label="Secret", owner=self.alice)
         client = self.as_user(self.mallory)
-        ids = [category["id"] for category in client.get("/categories/").data["results"]]
+        ids = [category["id"] for category in client.get("/categories/").data]
         self.assertIn(self.category.id, ids)
         self.assertNotIn(private.id, ids)
         self.assertEqual(client.get(f"/categories/{private.id}/").status_code, 404)

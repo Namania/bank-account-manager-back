@@ -10,6 +10,7 @@ from django.contrib.auth.signals import user_login_failed
 from django.core.exceptions import ObjectDoesNotExist
 from django.dispatch import receiver
 from django.middleware.csrf import get_token
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.parsers import JSONParser
@@ -21,6 +22,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, Toke
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from app.authentication import enforce_csrf
+from app.schema import CsrfTokenResponse, LoginRequest
 
 security_log = logging.getLogger("app.security")
 
@@ -69,6 +71,7 @@ class LoginView(_TokenView):
     # prevents logging a victim's browser into someone else's account.
     parser_classes = [JSONParser]
 
+    @extend_schema(request=LoginRequest, responses=CsrfTokenResponse)
     def post(self, request):
         serializer = TokenObtainPairSerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
@@ -80,6 +83,7 @@ class LoginView(_TokenView):
 class RefreshView(_TokenView):
     throttle_scope = "token_refresh"
 
+    @extend_schema(request=None, responses=CsrfTokenResponse)
     def post(self, request):
         enforce_csrf(request)
         serializer = TokenRefreshSerializer(data={"refresh": request.COOKIES.get(settings.AUTH_COOKIE_REFRESH, "")})
@@ -101,6 +105,7 @@ class RefreshView(_TokenView):
 class LogoutView(_TokenView):
     throttle_scope = "token_refresh"
 
+    @extend_schema(request=None, responses={204: None})
     def post(self, request):
         enforce_csrf(request)
         try:
@@ -113,6 +118,7 @@ class LogoutView(_TokenView):
 
 
 class CsrfView(_TokenView):
+    @extend_schema(responses=CsrfTokenResponse)
     def get(self, request):
         return Response({"csrfToken": get_token(request)})
 

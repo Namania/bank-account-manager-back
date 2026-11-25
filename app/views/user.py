@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from drf_spectacular.utils import extend_schema
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -19,6 +20,8 @@ class UserViewSet(mixins.ListModelMixin,
     throttle_scope = None
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return User.objects.none()
         user = self.request.user
         return User.objects.all().order_by('id') if user.is_staff else User.objects.filter(id=user.id).order_by('id')
 
@@ -37,6 +40,7 @@ class UserViewSet(mixins.ListModelMixin,
             serializer = self.get_serializer(request.user)
         return Response(serializer.data)
 
+    @extend_schema(responses={204: None})
     @action(detail=False, methods=['post'], url_path='me/password', serializer_class=PasswordChangeSerializer)
     def password(self, request):
         """Change the password, sign every other session out, keep this one."""

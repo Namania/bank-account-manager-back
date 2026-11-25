@@ -39,7 +39,10 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     def get_fields(self):
         fields = super().get_fields()
-        user = self.context['request'].user
+        request = self.context.get('request')
+        if request is None or not request.user.is_authenticated:
+            return fields  # schema generation: no caller to scope the choices to
+        user = request.user
         accounts = usable_accounts(user)
         fields['category'].queryset = visible_categories(user)
         fields['sender'].queryset = accounts

@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
+from app.filters import TransactionFilterBackend
 from app.models.transaction import Transaction
 from app.permissions import usable_accounts
 from app.serializers.transaction import TransactionSerializer
@@ -12,8 +13,11 @@ from app.serializers.transaction import TransactionSerializer
 class TransactionViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
+    filter_backends = [TransactionFilterBackend]
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return Transaction.objects.none()
         user = self.request.user
         if user.is_staff:
             return Transaction.objects.all()
@@ -44,7 +48,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, url_path=r'by_account/(?P<account_id>\d+)')
     def by_account(self, _, account_id=None):
-        queryset = self.get_queryset().filter(
+        queryset = self.filter_queryset(self.get_queryset()).filter(
             Q(sender_id=account_id) | Q(receiver_id=account_id)
         )
 
