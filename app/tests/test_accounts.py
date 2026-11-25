@@ -75,4 +75,4 @@ class AccountApiTests(ApiTestCase):
 
     def test_fields_use_snake_case(self):
         data = self.as_user(self.alice).get(f"/accounts/{self.alice_acc.id}/").data
-        self.assertEqual(set(data), {"id", "owners", "label", "balance", "created_at", "is_active", "is_bank"})
+        self.assertEqual(set(data), {"id", "owners", "owners_details", "label", "balance", "created_at", "is_active", "is_bank"})

@@ -143,6 +143,7 @@ REST_FRAMEWORK = {
         'token': '5/min',
         'token_refresh': '30/min',
         'password': '5/min',
+        'share': '10/min',
     },
     # Trusted reverse proxies in front of the app: the client address used for
     # throttling is read that many entries from the end of X-Forwarded-For.

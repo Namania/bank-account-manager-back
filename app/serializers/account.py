@@ -1,15 +1,23 @@
+from django.contrib.auth.models import User
 from rest_framework import serializers
 
 from app.models.account import Account
 from app.serializers.fields import CentsField
 
 
+class OwnerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username']
+
+
 class AccountSerializer(serializers.ModelSerializer):
     balance = CentsField(required=False)
+    owners_details = OwnerSerializer(source='owners', many=True, read_only=True)
 
     class Meta:
         model = Account
-        fields = ['id', 'owners', 'label', 'balance', 'created_at', 'is_active', 'is_bank']
+        fields = ['id', 'owners', 'owners_details', 'label', 'balance', 'created_at', 'is_active', 'is_bank']
         read_only_fields = ['owners', 'created_at', 'is_active', 'is_bank']
 
     def update(self, instance, validated_data):
@@ -32,3 +40,13 @@ class AccountSummarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = ['id', 'label', 'is_active', 'is_bank']
+
+
+class ShareSerializer(serializers.Serializer):  # pylint: disable=abstract-method
+    username = serializers.CharField()
+
+
+class ImportResultSerializer(serializers.Serializer):  # pylint: disable=abstract-method
+    created = serializers.IntegerField()
+    skipped = serializers.IntegerField()
+    errors = serializers.ListField(child=serializers.DictField())

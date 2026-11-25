@@ -22,6 +22,10 @@ class Transaction(models.Model):
     recurring = models.ForeignKey("app.RecurringTransaction", on_delete=models.SET_NULL, null=True, blank=True,
                                   related_name="generated", editable=False)
 
+    # Identifier of the statement line this transaction was imported from, so
+    # that importing the same statement twice creates nothing new.
+    import_id = models.CharField(max_length=64, null=True, blank=True, db_index=True, editable=False)
+
     class Meta:
         ordering = ["-date", "-id"]
 
